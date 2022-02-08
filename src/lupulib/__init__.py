@@ -1,5 +1,6 @@
 import requests
 from requests.exceptions import HTTPError
+
 import pickle
 import time
 import logging
@@ -7,8 +8,19 @@ import json
 import yaml
 from pathlib import Path
 
+# New imports to optimize API-Calls
+import asyncio
+import aiohttp
+import urllib.error
+import urllib.parse
+import urllib.request
+from typing import Any, Dict, List
+
+
+# Import from lupulib
 import lupulib.devices.alarm as ALARM
 import lupulib.constants as CONST
+from lupulib.exceptions import LupusecParseError, LupusecRequestError, LupusecResponseError
 from lupulib.devices.binary_sensor import LupusecBinarySensor
 from lupulib.devices.switch import LupusecSwitch
 
@@ -16,79 +28,55 @@ _LOGGER = logging.getLogger(__name__)
 home = str(Path.home())
 
 
-class Lupusec:
+class LupusecAPI:
     """Interface to Lupusec Webservices."""
 
-    def __init__(self, username, password, ip_address, get_devices=False):
-        """LupsecAPI constructor requires IP and credentials to the
-        Lupusec Webinterface.
-        """
-        # _LOGGER.debug("Lupusec.__init__ started...")
-        # _LOGGER.debug('Init LupusecSystem: %s, %s, %s, %s',
-        #    name, ip_address, username, password)
-        self.session = requests.Session()
-        self.session.auth = (username, password)
-        self.api_url = "http://{}/action/".format(ip_address)
-        self.model = "unknown"
-        self.headers = None
-        response = self._request_get("tokenGet")
-        _LOGGER.debug('HTTP-Responde-Code: %s', response.status_code)
+    def __init__(self, username, password, ip_address) -> None:
+        """Lupsec constructor to interface Lupusec Alarm System."""
+        
+        self._username = username
+        self._password = password
+        self._ip_address = ip_address
+        self._url = "http://{}/action/".format(ip_address)
+        self._model = "unknown"
+        self._auth = None
+        if _username != None and _password != None:
+            self._auth = aiohttp.BasicAuth(login=_username, password=_password, encoding='utf-8')
+        self._session = aiohttp.ClientSession(auth=_auth)
 
-        if response.status_code == 404:
-            resp = self.session.get(CONST.DEVICES_API_XT1)
-            if resp.status_code == 200:
-                _LOGGER.debug("XT1 found, setting it up")
-                self.model = 1
-                self.mode_translation = CONST.MODE_TRANSLATION_XT1
-                self.api_mode = "mode_st"
-                self.api_sensors = CONST.DEVICES_API_XT1
-                self.api_device_id = "no"
-                self._request_post("login")
-            else:
-                _LOGGER.debug("Unknown error while finding out which model is used")
-                return
-        else:
-            _LOGGER.debug("XT2 or higher found, setting up")
-            self.model = 2
-            self.mode_translation = CONST.MODE_TRANSLATION_XT2
-            self.api_mode = "mode_a1"
-            self.api_sensors = CONST.DEVICES_API_XT2
-            self.api_device_id = "sid"
-            self.headers = {"X-Token": json.loads(response.text)["message"]}
-        self._mode = None
-        self._devices = None
 
-        try:
-            self._history_cache = pickle.load(
-                open(home + "/" + CONST.HISTORY_CACHE_NAME, "rb")
-            )
-        except (OSError, IOError) as e:
-            self._history_cache = []
-            pickle.dump(
-                self._history_cache, open(home + "/" + CONST.HISTORY_CACHE_NAME, "wb")
-            )
+    async def _async_api_call(client, url):
+        """Generic sync method to call the Lupusec API"""
+        _LOGGER.debug("_async_api_call() called: ")
+        async with client.get(url) as resp:
+            # assert resp.status == 200
+            print(resp.status)
+            return await resp.text()
 
-        self._panel = self.get_panel()
-        _LOGGER.debug("self.get_panel()...")
-        self._cacheSensors = None
-        self._cacheStampS = time.time()
-        self._cachePss = None
-        self._cacheStampP = time.time()
 
-        #if get_devices or self._devices is None:
-         #   _LOGGER.debug("self.get_devices()...")
-         #   self.get_devices()
+    async def async_get_system(self) -> System:
+        """Async method to get the system info."""
+        _LOGGER.debug("async_get_system() called: ")
 
-    def _request_get(self, action):
-        response = self.session.get(
-            self.api_url + action, timeout=15, headers=self.headers
-        )
-        _LOGGER.debug(
-            "Action and statuscode of apiGET command: %s, %s",
-            action,
-            response.status_code,
-        )
-        return response
+        # Login to Lupusec System
+        url_cmd = CONST.LOGIN_REQUEST
+        async with _session as client:
+            data = await _async_api_call(client, url_cmd)
+        _LOGGER.debug(data)
+
+        # Get System Info
+        url_cmd = CONST.INFO_REQUEST
+        async with _session as client:
+            data = await _async_api_call(client, url_cmd)   
+    
+        json_data = json.loads(system)["updates"]
+        _LOGGER.debug(json_data)
+        print("  Hardware-Version: %s ", json_data["rf_ver"])
+        print("  Firmware-Version: %s ", json_data["em_ver"])
+
+        #return self.clean_json(response.text)[CONST.INFO_HEADER]
+        return System(json_data)
+ 
 
     def _request_post(self, action, params={}):
         return self.session.post(
@@ -160,7 +148,7 @@ class Lupusec:
 
     def get_panel(self):
         _LOGGER.debug("get_panel() called:")
-	# we are trimming the json from Lupusec heavily, since its bullcrap
+	    # we are trimming the json from Lupusec heavily, since its bullcrap
         response = self._request_get("panelCondGet")
         if response.status_code != 200:
             raise Exception("Unable to get panel " + response.status_code)
@@ -315,6 +303,27 @@ class Lupusec:
         _LOGGER.debug("  Firmware-Version: %s ", json_data["em_ver"])
 
         return self.clean_json(response.text)[CONST.INFO_HEADER]
+
+
+ 
+     async def _api_call_async(session: aiohttp.ClientSession, url: str) -> Dict[str, Any]:
+        """Make an api call asynchronously."""
+        try:
+            resp = await session.get(url, raise_for_status=True)
+        except aiohttp.ClientResponseError as exception:
+            raise LupusecResponseError(exception.status, exception.message) from exception
+        except aiohttp.ClientConnectionError as exception:
+            raise LupusecRequestError(str(exception)) from exception
+
+        # try to parse json response
+        try:
+            return await resp.json()  # type: ignore
+        except json.JSONDecodeError as exception:
+            raise LupusecParseError(str(exception)) from exception
+
+
+    
+
 
 
     def set_mode(self, mode):

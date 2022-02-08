@@ -1,3 +1,5 @@
+# Constants for Lupusec Alarm System
+
 # Used in setup.py
 # -*- coding: utf-8 -*-
 VERSION = "0.1.1"
@@ -14,6 +16,67 @@ PROJECT_LONG_DESCRIPTION = (
 )
 PROJECT_AUTHOR = "Majuss"
 
+
+# Lupusec API Calls: Requests and Headers
+LOGIN_REQUEST = "login"
+INFO_REQUEST = "welcomeGet"
+INFO_HEADER = "updates"
+
+HISTORY_REQUEST = "historyGet"
+HISTORY_ALARM_COLUMN = "a"
+HISTORY_HEADER = "hisrows"
+HISTORY_CACHE_NAME = ".lupusec_history_cache"
+
+
+# Lupusec System Info
+SYS_HW_VERSION = "rf_ver"
+SYS_SW_VERSION = "em_ver"
+SYS_GSM_VERSION = "gsm_ver"
+SYS_IP_ADDRESS = "ip"
+SYS_MAC_ADDRESS = "mac"
+
+
+# Lupusec System and Device status
+STATUS_ON_INT = 0
+STATUS_ON = "on"
+STATUS_OFF_INT = 1
+STATUS_OFF = "off"
+STATUS_OFFLINE = "offline"
+STATUS_CLOSED = "Geschlossen"
+STATUS_CLOSED_INT = 0
+STATUS_OPEN = "Offen"
+STATUS_OPEN_INT = 1
+
+ALARM_NAME = "Lupusec Alarm"
+ALARM_DEVICE_ID = "0"
+ALARM_TYPE = "Alarm"
+
+
+# GENERIC Lupusec DEVICE TYPES
+TYPE_WINDOW = "Fensterkontakt"
+TYPE_DOOR = "Türkontakt"
+TYPE_CONTACT_XT2 = 4
+TYPE_WATER_XT2 = 5
+TYPE_SMOKE_XT2 = 11
+TYPE_POWER_SWITCH_1_XT2 = 24
+TYPE_POWER_SWITCH_2_XT2 = 25
+TYPE_POWER_SWITCH = "Steckdose"
+TYPE_SWITCH = [TYPE_POWER_SWITCH, TYPE_POWER_SWITCH_1_XT2, TYPE_POWER_SWITCH_2_XT2]
+TYPE_OPENING = [TYPE_DOOR, TYPE_WINDOW, TYPE_CONTACT_XT2]
+BINARY_SENSOR_TYPES = TYPE_OPENING
+TYPE_SENSOR = ["Rauchmelder", "Wassermelder", TYPE_WATER_XT2, TYPE_SMOKE_XT2]
+TYPE_TRANSLATION = {
+    "Fensterkontakt": "window",
+    "Türkontakt": "door",
+    TYPE_CONTACT_XT2: "Fenster-/Türkontakt",
+    TYPE_WATER_XT2: "Wassermelder",
+    TYPE_SMOKE_XT2: "Rauchmelder",
+}
+DEVICES_API_XT1 = "sensorListGet"
+DEVICES_API_XT2 = "deviceListGet"
+
+
+# Alarm Modes and Zones
 MODE_AWAY = "Arm"
 MODE_HOME = "Home"
 MODE_DISARMED = "Disarm"
@@ -40,47 +103,3 @@ MODE_TRANSLATION_GENERIC = {
 }
 DEFAULT_MODE = MODE_AWAY
 
-INFO_REQUEST = "welcomeGet"
-INFO_HEADER = "updates"
-
-HISTORY_REQUEST = "historyGet"
-HISTORY_ALARM_COLUMN = "a"
-HISTORY_HEADER = "hisrows"
-HISTORY_CACHE_NAME = ".lupusec_history_cache"
-
-STATUS_ON_INT = 0
-STATUS_ON = "on"
-STATUS_OFF_INT = 1
-STATUS_OFF = "off"
-STATUS_OFFLINE = "offline"
-STATUS_CLOSED = "Geschlossen"
-STATUS_CLOSED_INT = 0
-STATUS_OPEN = "Offen"
-STATUS_OPEN_INT = 1
-
-ALARM_NAME = "Lupusec Alarm"
-ALARM_DEVICE_ID = "0"
-ALARM_TYPE = "Alarm"
-
-# GENERIC Lupusec DEVICE TYPES
-TYPE_WINDOW = "Fensterkontakt"
-TYPE_DOOR = "Türkontakt"
-TYPE_CONTACT_XT2 = 4
-TYPE_WATER_XT2 = 5
-TYPE_SMOKE_XT2 = 11
-TYPE_POWER_SWITCH_1_XT2 = 24
-TYPE_POWER_SWITCH_2_XT2 = 25
-TYPE_POWER_SWITCH = "Steckdose"
-TYPE_SWITCH = [TYPE_POWER_SWITCH, TYPE_POWER_SWITCH_1_XT2, TYPE_POWER_SWITCH_2_XT2]
-TYPE_OPENING = [TYPE_DOOR, TYPE_WINDOW, TYPE_CONTACT_XT2]
-BINARY_SENSOR_TYPES = TYPE_OPENING
-TYPE_SENSOR = ["Rauchmelder", "Wassermelder", TYPE_WATER_XT2, TYPE_SMOKE_XT2]
-TYPE_TRANSLATION = {
-    "Fensterkontakt": "window",
-    "Türkontakt": "door",
-    TYPE_CONTACT_XT2: "Fenster-/Türkontakt",
-    TYPE_WATER_XT2: "Wassermelder",
-    TYPE_SMOKE_XT2: "Rauchmelder",
-}
-DEVICES_API_XT1 = "sensorListGet"
-DEVICES_API_XT2 = "deviceListGet"

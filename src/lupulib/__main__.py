@@ -159,7 +159,7 @@ def call():
 
         if args.info:
             _LOGGER.info('get_info()...')
-            _LOGGER.info(json.dumps(lupusec.get_info(), indent=4, sort_keys=True))       
+            _LOGGER.info(json.dumps(lupusec.async_get_system(), indent=4, sort_keys=True))       
                 
     except Exception as exc:
         _LOGGER.error(exc)
