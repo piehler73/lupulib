@@ -42,7 +42,7 @@ class LupusecSystem(object):
         """Shortcut to get the ip-address of the system."""
         return self.get_value(CONST.SYS_IP_ADDRESS)        
 
-   @property
+    @property
     def mac_address(self):
         """Shortcut to get the mac-address of the system."""
         return self.get_value(CONST.SYS_MAC_ADDRESS)        
