@@ -48,10 +48,16 @@ class LupusecAPI:
     async def _async_api_call(client, url):
         """Generic sync method to call the Lupusec API"""
         _LOGGER.debug("_async_api_call() called: ")
-        async with client.get(url) as resp:
-            # assert resp.status == 200
-            print(resp.status)
-            return await resp.text()
+
+        try:
+            async with client.get(url) as resp:
+                    # assert resp.status == 200
+                    print(resp.status)
+                    return await resp.text()
+        except aiohttp.ClientResponseError as exception:
+            raise LupusecResponseError(exception.status, exception.message) from exception
+        except aiohttp.ClientConnectionError as exception:
+            raise LupusecRequestError(str(exception)) from exception
 
 
     async def async_get_system(self) -> System:
@@ -69,7 +75,12 @@ class LupusecAPI:
         async with _session as client:
             data = await _async_api_call(client, url_cmd)   
     
-        json_data = json.loads(system)["updates"]
+        # try to parse json response
+        try:
+            json_data = json.loads(system)["updates"]
+        except json.JSONDecodeError as exception:
+            raise LupusecParseError(str(exception)) from exception
+        
         _LOGGER.debug(json_data)
         print("  Hardware-Version: %s ", json_data["rf_ver"])
         print("  Firmware-Version: %s ", json_data["em_ver"])
@@ -304,25 +315,7 @@ class LupusecAPI:
 
         return self.clean_json(response.text)[CONST.INFO_HEADER]
 
-
  
-     async def _api_call_async(session: aiohttp.ClientSession, url: str) -> Dict[str, Any]:
-        """Make an api call asynchronously."""
-        try:
-            resp = await session.get(url, raise_for_status=True)
-        except aiohttp.ClientResponseError as exception:
-            raise LupusecResponseError(exception.status, exception.message) from exception
-        except aiohttp.ClientConnectionError as exception:
-            raise LupusecRequestError(str(exception)) from exception
-
-        # try to parse json response
-        try:
-            return await resp.json()  # type: ignore
-        except json.JSONDecodeError as exception:
-            raise LupusecParseError(str(exception)) from exception
-
-
-    
 
 
 

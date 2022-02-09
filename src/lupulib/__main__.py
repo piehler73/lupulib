@@ -158,7 +158,7 @@ def call():
                 _devicePrint(device)
 
         if args.info:
-            _LOGGER.info('get_info()...')
+            _LOGGER.info('async_get_system()...')
             _LOGGER.info(json.dumps(lupusec.async_get_system(), indent=4, sort_keys=True))       
                 
     except Exception as exc:
