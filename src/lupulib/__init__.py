@@ -23,6 +23,7 @@ import lupulib.constants as CONST
 from lupulib.exceptions import LupusecParseError, LupusecRequestError, LupusecResponseError
 from lupulib.devices.binary_sensor import LupusecBinarySensor
 from lupulib.devices.switch import LupusecSwitch
+from lupulib.system import System
 
 _LOGGER = logging.getLogger(__name__)
 home = str(Path.home())
