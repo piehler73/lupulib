@@ -18,9 +18,9 @@ from typing import Any, Dict, List
 
 
 # Import from lupulib
+import lupulib.system as System
 import lupulib.devices.alarm as ALARM
 import lupulib.constants as CONST
-import lupulib.system as System
 from lupulib.exceptions import LupusecParseError, LupusecRequestError, LupusecResponseError
 from lupulib.devices.binary_sensor import LupusecBinarySensor
 from lupulib.devices.switch import LupusecSwitch

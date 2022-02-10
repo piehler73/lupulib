@@ -125,7 +125,7 @@ def call():
 
     try:
         if args.username and args.password and args.ip_address:
-            lupusec = lupulib.Lupusec(ip_address=args.ip_address,
+            lupusec = lupulib.LupusecAPI(ip_address=args.ip_address,
                                      username=args.username,
                                      password=args.password)
         
