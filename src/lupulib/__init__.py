@@ -18,12 +18,13 @@ from typing import Any, Dict, List
 
 
 # Import from lupulib
-import lupulib.system as System
+import lupulib
+# import lupulib.system as System
 import lupulib.devices.alarm as ALARM
 import lupulib.constants as CONST
-from lupulib.exceptions import LupusecParseError, LupusecRequestError, LupusecResponseError
-from lupulib.devices.binary_sensor import LupusecBinarySensor
-from lupulib.devices.switch import LupusecSwitch
+# from lupulib.exceptions import LupusecParseError, LupusecRequestError, LupusecResponseError
+# from lupulib.devices.binary_sensor import LupusecBinarySensor
+# from lupulib.devices.switch import LupusecSwitch
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -45,6 +46,7 @@ class LupusecAPI:
         if _username != None and _password != None:
             self._auth = aiohttp.BasicAuth(login=_username, password=_password, encoding='utf-8')
         self._session = aiohttp.ClientSession(auth=_auth)
+        self._system = None
 
 
     async def _async_api_call(client, url):
@@ -62,7 +64,7 @@ class LupusecAPI:
             raise LupusecRequestError(str(exception)) from exception
 
 
-    async def async_get_system(self) -> System:
+    async def async_get_system(self) -> lupulib.system:
         """Async method to get the system info."""
         _LOGGER.debug("async_get_system() called: ")
 
@@ -88,7 +90,7 @@ class LupusecAPI:
         print("  Firmware-Version: %s ", json_data["em_ver"])
 
         #return self.clean_json(response.text)[CONST.INFO_HEADER]
-        return System(json_data)
+        return lupulib.system(json_data)
  
 
     def _request_post(self, action, params={}):
