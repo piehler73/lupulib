@@ -2,7 +2,8 @@
 import json
 import logging
 
-from lupulib.devices.switch import LupusecDevice, LupusecSwitch
+from lupulib.devices import LupusecDevice
+from lupulib.devices.switch import LupusecSwitch
 import lupulib.constants as CONST
 
 _LOGGER = logging.getLogger(__name__)
