@@ -17,7 +17,7 @@ def create_alarm(panel_json, lupusec, area="1"):
     return LupusecAlarm(panel_json, lupusec, area)
 
 
-class LupusecAlarm(LupusecSwitch):
+class LupusecAlarm(switch.LupusecSwitch):
     """Class to represent the Lupusec alarm as a device."""
 
     def __init__(self, json_obj, lupusec, area="1"):
@@ -54,7 +54,7 @@ class LupusecAlarm(LupusecSwitch):
 
     def refresh(self):
         """Refresh the alarm device."""
-        response_object = LupusecDevice.refresh(self)
+        response_object = device.LupusecDevice.refresh(self)
         return response_object
 
     def switch_on(self):
