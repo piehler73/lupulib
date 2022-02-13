@@ -6,10 +6,10 @@ import logging
 import lupulib.constants as CONST
 
 # Import device classes from lupulib
-import lupulib.alarm
-import lupulib.binary_sensor
-import lupulib.switch
-import lupulib.system
+import lupulib.devices.alarm
+import lupulib.devices.binary_sensor
+import lupulib.devices.switch
+import lupulib.devices.system
 
 
 class LupusecDevice(object):
