@@ -19,8 +19,7 @@ from typing import Any, Dict, List
 
 # Import from lupulib
 import lupulib
-from lupulib.devices.system import LupusecSystem
-import lupulib.devices.alarm as ALARM
+import lupulib.devices
 import lupulib.constants as CONST
 # from lupulib.exceptions import LupusecParseError, LupusecRequestError, LupusecResponseError
 # from lupulib.devices.binary_sensor import LupusecBinarySensor
@@ -64,7 +63,7 @@ class LupusecAPI:
             raise LupusecRequestError(str(exception)) from exception
 
 
-    async def async_get_system(self) -> LupusecSystem:
+    async def async_get_system(self) -> devices.system.LupusecSystem:
         """Async method to get the system info."""
         _LOGGER.debug("async_get_system() called: ")
 
@@ -90,7 +89,7 @@ class LupusecAPI:
         print("  Firmware-Version: %s ", json_data["em_ver"])
 
         #return self.clean_json(response.text)[CONST.INFO_HEADER]
-        return LupusecSystem(json_data)
+        return devices.system.LupusecSystem(json_data)
  
 
     def _request_post(self, action, params={}):
@@ -248,7 +247,7 @@ class LupusecAPI:
             if alarmDevice:
                 alarmDevice.update(panelJson)
             else:
-                alarmDevice = ALARM.create_alarm(panelJson, self)
+                alarmDevice = devices.LupusecAlarm.create_alarm(panelJson, self)
                 self._devices["0"] = alarmDevice
 
             # Now we will handle the power switches
