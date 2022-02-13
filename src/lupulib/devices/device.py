@@ -1,4 +1,5 @@
 """Lupusec generic device."""
+
 # Generic imports
 import json
 import logging

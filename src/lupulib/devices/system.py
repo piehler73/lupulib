@@ -1,8 +1,12 @@
 """Lupusec Alarm System"""
+
+# Generic imports
 import json
 import logging
 
+# Imports from lupulib
 import lupulib.constants as CONST
+
 
 class LupusecSystem(object):
     """Class to represent a Lupusec System"""

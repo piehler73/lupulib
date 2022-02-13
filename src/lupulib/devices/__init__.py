@@ -1,6 +1,5 @@
 """Init file for devices directory."""
 
-
 # Import constants from lupulib
 import lupulib.constants as CONST
 

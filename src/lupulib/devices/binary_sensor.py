@@ -1,10 +1,11 @@
 """Lupusec binary sensor device."""
 
-from lupulib.devices import LupusecDevice
+# Imports from lupulib
 import lupulib.constants as CONST
+import lupulib.devices.device
 
 
-class LupusecBinarySensor(LupusecDevice):
+class LupusecBinarySensor(device.LupusecDevice):
     """Class to represent an on / off, online/offline sensor."""
 
     @property
