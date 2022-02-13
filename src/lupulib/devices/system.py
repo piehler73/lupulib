@@ -25,7 +25,6 @@ class LupusecSystem(object):
         """Get a value from the json object."""
         return self._json_state.get(name)
 
-
     @property
     def hw_version(self):
         """Shortcut to get the hardware version of the system."""

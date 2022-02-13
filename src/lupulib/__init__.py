@@ -16,11 +16,11 @@ import urllib.parse
 import urllib.request
 from typing import Any, Dict, List
 
-
 # Import from lupulib
-import lupulib
+# import lupulib
 import lupulib.devices
 import lupulib.constants as CONST
+import lupulib.exceptions
 # from lupulib.exceptions import LupusecParseError, LupusecRequestError, LupusecResponseError
 # from lupulib.devices.binary_sensor import LupusecBinarySensor
 # from lupulib.devices.switch import LupusecSwitch
