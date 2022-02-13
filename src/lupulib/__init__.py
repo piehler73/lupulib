@@ -35,7 +35,7 @@ class LupusecAPI:
     """Interface to Lupusec Webservices."""
 
     def __init__(self, username, password, ip_address) -> None:
-        """Lupsec constructor to interface Lupusec Alarm System."""
+        """LupusecAPI constructor to interface Lupusec Alarm System."""
         
         self._username = username
         self._password = password
@@ -64,7 +64,7 @@ class LupusecAPI:
             raise LupusecRequestError(str(exception)) from exception
 
 
-    async def async_get_system(self) -> lupulib.system:
+    async def async_get_system(self) -> lupulib.devices.LupusecSystem:
         """Async method to get the system info."""
         _LOGGER.debug("async_get_system() called: ")
 
@@ -77,11 +77,11 @@ class LupusecAPI:
         # Get System Info
         url_cmd = CONST.INFO_REQUEST
         async with _session as client:
-            data = await _async_api_call(client, url_cmd)   
+            data = await _async_api_call(client, url_cmd) 
     
         # try to parse json response
         try:
-            json_data = json.loads(system)["updates"]
+            json_data = json.loads(data)["updates"]
         except json.JSONDecodeError as exception:
             raise LupusecParseError(str(exception)) from exception
         
@@ -90,7 +90,7 @@ class LupusecAPI:
         print("  Firmware-Version: %s ", json_data["em_ver"])
 
         #return self.clean_json(response.text)[CONST.INFO_HEADER]
-        return lupulib.system(json_data)
+        return lupulib.devices.LupusecSystem(json_data)
  
 
     def _request_post(self, action, params={}):
