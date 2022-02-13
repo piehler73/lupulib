@@ -2,7 +2,15 @@
 import json
 import logging
 
+# Import constants from lupulib
 import lupulib.constants as CONST
+
+# Import device classes from lupulib
+import lupulib.alarm
+import lupulib.binary_sensor
+import lupulib.switch
+import lupulib.system
+
 
 class LupusecDevice(object):
     """Class to represent each Lupusec device."""
