@@ -2,10 +2,10 @@
 
 # Imports from lupulib
 import lupulib.constants as CONST
-import lupulib.devices.device
+from lupulib.devices.device import LupusecDevice
 
 
-class LupusecSwitch(device.LupusecDevice):
+class LupusecSwitch(LupusecDevice):
     """Class to add switch functionality."""
 
     def switch_on(self):

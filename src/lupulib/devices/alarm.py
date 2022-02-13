@@ -5,8 +5,9 @@ import json
 import logging
 
 # Imports from lupulib
-import lupulib.devices.device
-import lupulib.devices.switch
+from lupulib.devices.device import LupusecDevice
+# import lupulib.devices.switch
+from lupulib.devices.switch import LupusecSwitch
 import lupulib.constants as CONST
 
 _LOGGER = logging.getLogger(__name__)
@@ -17,7 +18,7 @@ def create_alarm(panel_json, lupusec, area="1"):
     return LupusecAlarm(panel_json, lupusec, area)
 
 
-class LupusecAlarm(switch.LupusecSwitch):
+class LupusecAlarm(LupusecSwitch):
     """Class to represent the Lupusec alarm as a device."""
 
     def __init__(self, json_obj, lupusec, area="1"):
@@ -54,7 +55,7 @@ class LupusecAlarm(switch.LupusecSwitch):
 
     def refresh(self):
         """Refresh the alarm device."""
-        response_object = device.LupusecDevice.refresh(self)
+        response_object = LupusecDevice.refresh(self)
         return response_object
 
     def switch_on(self):
