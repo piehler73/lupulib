@@ -19,7 +19,7 @@ from typing import Any, Dict, List
 
 # Import from lupulib
 import lupulib
-# import lupulib.system as System
+from lupulib.devices.system import LupusecSystem
 import lupulib.devices.alarm as ALARM
 import lupulib.constants as CONST
 # from lupulib.exceptions import LupusecParseError, LupusecRequestError, LupusecResponseError
@@ -64,7 +64,7 @@ class LupusecAPI:
             raise LupusecRequestError(str(exception)) from exception
 
 
-    async def async_get_system(self) -> lupulib.devices.LupusecSystem:
+    async def async_get_system(self) -> LupusecSystem:
         """Async method to get the system info."""
         _LOGGER.debug("async_get_system() called: ")
 
@@ -90,7 +90,7 @@ class LupusecAPI:
         print("  Firmware-Version: %s ", json_data["em_ver"])
 
         #return self.clean_json(response.text)[CONST.INFO_HEADER]
-        return lupulib.devices.LupusecSystem(json_data)
+        return LupusecSystem(json_data)
  
 
     def _request_post(self, action, params={}):
