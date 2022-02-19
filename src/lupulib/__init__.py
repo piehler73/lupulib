@@ -1,3 +1,14 @@
+# SYS imports
+import os
+import sys
+
+# Append subdirectories to sys.path
+fpath = os.path.join(os.path.dirname(__file__), 'devices')
+sys.path.append(fpath)
+print(sys.path)
+
+
+# Old imports for API Calls
 import requests
 from requests.exceptions import HTTPError
 

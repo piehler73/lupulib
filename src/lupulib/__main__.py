@@ -1,7 +1,23 @@
-import lupulib
+""" Lupulib main() Command Line Tool for LupusecAPI """
+
+# SYS imports
+import os
+import sys
+
+# Print project system path
+ppath = os.path.abspath(os.path.join(
+                  os.path.dirname(__file__), 
+                  os.pardir)
+print(ppath)
+
+# Imports from external libraries
 import argparse
 import logging
 import json
+
+# Import from lupulib
+import lupulib
+
 
 _LOGGER = logging.getLogger('lupuseccl')
 
