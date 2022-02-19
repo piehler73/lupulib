@@ -71,7 +71,10 @@ class LupusecAPI:
             async with client.get(url) as resp:
                 # assert resp.status == 200
                 print(resp.status)
-                return await resp.text()
+                content = await resp.text()
+                print("API-Call finished:")
+                _LOGGER.debug("  API-Call: %s", url)
+                return content
         except aiohttp.ClientResponseError as exception:
             raise LupusecResponseError(exception.status, exception.message) from exception
         except aiohttp.ClientConnectionError as exception:
