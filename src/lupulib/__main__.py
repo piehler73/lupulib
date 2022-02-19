@@ -5,9 +5,7 @@ import os
 import sys
 
 # Print project system path
-ppath = os.path.abspath(os.path.join(
-                  os.path.dirname(__file__), 
-                  os.pardir)
+ppath = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 print(ppath)
 
 # Imports from external libraries
@@ -120,6 +118,7 @@ def get_arguments():
 
 def call():
     """Execute command line helper."""
+    print("__mi")
     args = get_arguments()
 
     if args.debug:

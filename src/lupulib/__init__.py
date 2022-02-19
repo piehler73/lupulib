@@ -43,6 +43,7 @@ import lupulib.exceptions
 
 _LOGGER = logging.getLogger(__name__)
 home = str(Path.home())
+print(home)
 
 
 class LupusecAPI:
@@ -50,16 +51,15 @@ class LupusecAPI:
 
     def __init__(self, username, password, ip_address) -> None:
         """LupusecAPI constructor to interface Lupusec Alarm System."""
-        
         self._username = username
         self._password = password
         self._ip_address = ip_address
         self._url = "http://{}/action/".format(ip_address)
         self._model = "unknown"
         self._auth = None
-        if _username != None and _password != None:
-            self._auth = aiohttp.BasicAuth(login=_username, password=_password, encoding='utf-8')
-        self._session = aiohttp.ClientSession(auth=_auth)
+        if self._username != None and self._password != None:
+            self._auth = aiohttp.BasicAuth(login=self._username, password=self._password, encoding='utf-8')
+        self._session = aiohttp.ClientSession(auth=self._auth)
         self._system = None
 
 
@@ -84,24 +84,27 @@ class LupusecAPI:
 
         # Login to Lupusec System
         url_cmd = CONST.LOGIN_REQUEST
-        async with _session as client:
+        _LOGGER.debug("  API-Call: %s", url_cmd)
+        async with self._session as client:
             data = await _async_api_call(client, url_cmd)
-        _LOGGER.debug(data)
+            _LOGGER.debug(data)
 
         # Get System Info
         url_cmd = CONST.INFO_REQUEST
-        async with _session as client:
+        _LOGGER.debug("  API-Call: %s", url_cmd)
+        async with self._session as client:
             data = await _async_api_call(client, url_cmd) 
+            _LOGGER.debug(data)
     
-        # try to parse json response
-        try:
-            json_data = json.loads(data)["updates"]
-        except json.JSONDecodeError as exception:
-            raise LupusecParseError(str(exception)) from exception
+            # try to parse json response
+            try:
+                json_data = json.loads(data)["updates"]
+            except json.JSONDecodeError as exception:
+                raise LupusecParseError(str(exception)) from exception
         
-        _LOGGER.debug(json_data)
-        print("  Hardware-Version: %s ", json_data["rf_ver"])
-        print("  Firmware-Version: %s ", json_data["em_ver"])
+            _LOGGER.debug(json_data)
+            print("  Hardware-Version: %s ", json_data["rf_ver"])
+            print("  Firmware-Version: %s ", json_data["em_ver"])
 
         #return self.clean_json(response.text)[CONST.INFO_HEADER]
         return devices.system.LupusecSystem(json_data)
