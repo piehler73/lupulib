@@ -24,12 +24,12 @@ import yaml
 from pathlib import Path
 
 # New imports to optimize API-Calls
+from typing import Any, Dict, List
 import asyncio
 import aiohttp
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Any, Dict, List
 
 # Import from lupulib
 # import lupulib
@@ -69,13 +69,13 @@ class LupusecAPI:
 
         try:
             async with client.get(url) as resp:
-                    # assert resp.status == 200
-                    print(resp.status)
-                    return await resp.text()
+                # assert resp.status == 200
+                print(resp.status)
+                return await resp.text()
         except aiohttp.ClientResponseError as exception:
             raise LupusecResponseError(exception.status, exception.message) from exception
         except aiohttp.ClientConnectionError as exception:
-            raise LupusecRequestError(str(exception)) from exception
+            raise LupusecRequestError(str(exception)) from exception   
 
 
     async def async_get_system(self) -> devices.system.LupusecSystem:
@@ -95,20 +95,17 @@ class LupusecAPI:
         async with self._session as client:
             data = await _async_api_call(client, url_cmd) 
             _LOGGER.debug(data)
-    
+ 
             # try to parse json response
             try:
                 json_data = json.loads(data)["updates"]
+                _LOGGER.debug(json_data)
+                print("  Hardware-Version: %s ", json_data["rf_ver"])
+                print("  Firmware-Version: %s ", json_data["em_ver"])
+                return await devices.system.LupusecSystem(json_data)
             except json.JSONDecodeError as exception:
                 raise LupusecParseError(str(exception)) from exception
-        
-            _LOGGER.debug(json_data)
-            print("  Hardware-Version: %s ", json_data["rf_ver"])
-            print("  Firmware-Version: %s ", json_data["em_ver"])
 
-        #return self.clean_json(response.text)[CONST.INFO_HEADER]
-        return devices.system.LupusecSystem(json_data)
- 
 
     def _request_post(self, action, params={}):
         return self.session.post(
