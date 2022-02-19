@@ -5,10 +5,12 @@ import sys
 # Append subdirectories to sys.path
 ppath = os.path.abspath(os.path.join(os.path.dirname(__file__),os.pardir))
 print(ppath)
+qpath = os.path.dirname(__file__)
+print(qpath)
 fpath = os.path.join(os.path.dirname(__file__), 'devices')
+sys.path.append(qpath)
 sys.path.append(fpath)
 print(sys.path)
-
 
 # Old imports for API Calls
 import requests
