@@ -3,6 +3,10 @@ import os
 import sys
 
 # Append subdirectories to sys.path
+ppath = os.path.abspath(os.path.join(
+                  os.path.dirname(__file__), 
+                  os.pardir)
+print(ppath)
 fpath = os.path.join(os.path.dirname(__file__), 'devices')
 sys.path.append(fpath)
 print(sys.path)
