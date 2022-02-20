@@ -63,7 +63,7 @@ class LupusecAPI:
         self._system = None
 
 
-    async def _async_api_call(client, url):
+    async def _async_api_call(client, url) -> dict:
         """Generic sync method to call the Lupusec API"""
         _LOGGER.debug("_async_api_call() called: ")
 
@@ -72,6 +72,7 @@ class LupusecAPI:
                 # assert resp.status == 200
                 print(resp.status)
                 content = await resp.text()
+                print("type of response: ", type(content))
                 print("API-Call finished:")
                 _LOGGER.debug("  API-Call: %s", url)
                 return content
