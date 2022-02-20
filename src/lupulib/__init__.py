@@ -24,7 +24,7 @@ import yaml
 from pathlib import Path
 
 # New imports to optimize API-Calls
-from typing import Any, Dict, List
+#from typing import Dict
 import asyncio
 import aiohttp
 import urllib.error
@@ -74,7 +74,7 @@ class LupusecAPI:
                     _LOGGER.error(f"Response status: {response.status}")
                     return {}                
                 print(resp.status)
-                content = await resp.json()
+                content = await resp.json(content_type=None)
                 print("type of response: ", type(content))
                 print("API-Call finished:")
                 return content
@@ -85,7 +85,7 @@ class LupusecAPI:
         except aiohttp.ContentTypeError:
             _LOGGER.error("JSON decode failed")
             return {}
- 
+
 
 
     async def async_get_system(self) -> devices.system.LupusecSystem:
@@ -105,7 +105,7 @@ class LupusecAPI:
         async with self._session as client:
             data = await _async_api_call(client, url_cmd) 
             _LOGGER.debug(data)
-            return await devices.system.LupusecSystem(data)
+            return devices.system.LupusecSystem(data)
  
             # try to parse json response
             # try:
