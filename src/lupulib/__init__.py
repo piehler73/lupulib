@@ -63,23 +63,29 @@ class LupusecAPI:
         self._system = None
 
 
-    async def _async_api_call(client, url) -> dict:
+    async def _async_api_call(client, url) -> Dict:
         """Generic sync method to call the Lupusec API"""
         _LOGGER.debug("_async_api_call() called: ")
 
         try:
             async with client.get(url) as resp:
-                # assert resp.status == 200
+                _LOGGER.debug("  API-Call: %s", url)
+                if response.status != 200:
+                    _LOGGER.error(f"Response status: {response.status}")
+                    return {}                
                 print(resp.status)
-                content = await resp.text()
+                content = await resp.json()
                 print("type of response: ", type(content))
                 print("API-Call finished:")
-                _LOGGER.debug("  API-Call: %s", url)
                 return content
-        except aiohttp.ClientResponseError as exception:
-            raise LupusecResponseError(exception.status, exception.message) from exception
-        except aiohttp.ClientConnectionError as exception:
-            raise LupusecRequestError(str(exception)) from exception   
+        except aiohttp.client_exceptions.ClientConnectorError:
+            _LOGGER.error("Cannot connect to: ", url)
+            return {}
+
+        except aiohttp.ContentTypeError:
+            _LOGGER.error("JSON decode failed")
+            return {}
+ 
 
 
     async def async_get_system(self) -> devices.system.LupusecSystem:
@@ -99,16 +105,17 @@ class LupusecAPI:
         async with self._session as client:
             data = await _async_api_call(client, url_cmd) 
             _LOGGER.debug(data)
+            return await devices.system.LupusecSystem(data)
  
             # try to parse json response
-            try:
-                json_data = json.loads(data)["updates"]
-                _LOGGER.debug(json_data)
-                print("  Hardware-Version: %s ", json_data["rf_ver"])
-                print("  Firmware-Version: %s ", json_data["em_ver"])
-                return await devices.system.LupusecSystem(json_data)
-            except json.JSONDecodeError as exception:
-                raise LupusecParseError(str(exception)) from exception
+            # try:
+            #     json_data = json.loads(data)["updates"]
+            #    _LOGGER.debug(json_data)
+            #    print("  Hardware-Version: %s ", json_data["rf_ver"])
+            #    print("  Firmware-Version: %s ", json_data["em_ver"])
+            #    return await devices.system.LupusecSystem(json_data)
+            #except json.JSONDecodeError as exception:
+            #    raise LupusecParseError(str(exception)) from exception
 
 
     def _request_post(self, action, params={}):
