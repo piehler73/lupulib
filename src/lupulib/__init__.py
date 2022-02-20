@@ -24,7 +24,7 @@ import yaml
 from pathlib import Path
 
 # New imports to optimize API-Calls
-#from typing import Dict
+from typing import Dict
 import asyncio
 import aiohttp
 import urllib.error
