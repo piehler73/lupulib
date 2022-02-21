@@ -88,7 +88,7 @@ class LupusecAPI:
 
 
 
-    async def async_get_system(self) -> devices.system.LupusecSystem:
+    async def async_get_system(self) -> None:
         """Async method to get the system info."""
         _LOGGER.debug("async_get_system() called: ")
 
@@ -119,7 +119,8 @@ class LupusecAPI:
             response_list = await asyncio.gather(*tasks)
             for content in response_list:
                 print(content)
-                return devices.system.LupusecSystem(content)
+                _LOGGER.debug("Response Content:", content)
+                # return devices.system.LupusecSystem(content)
 
 
             # try to parse json response

@@ -176,7 +176,8 @@ def call():
 
         if args.info:
             _LOGGER.info('__main.py__.call().async_get_system()...')
-            _LOGGER.info(json.dumps(lupusec.async_get_system(), indent=4, sort_keys=True))       
+            #_LOGGER.info(json.dumps(lupusec.async_get_system(), indent=4, sort_keys=True))      
+            asyncio.run(lupusec.async_get_system()) 
                 
     except Exception as exc:
         _LOGGER.error(exc)
