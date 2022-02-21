@@ -15,6 +15,7 @@ import json
 
 # Import from lupulib
 import lupulib
+import lupulib.constants as CONST
 
 
 _LOGGER = logging.getLogger('lupuseccl')
@@ -118,7 +119,8 @@ def get_arguments():
 
 def call():
     """Execute command line helper."""
-    print("__mi")
+    print("__main__.py.call()...")
+    print("Lupulib-Version: ", CONST.VERSION )
     args = get_arguments()
 
     if args.debug:
@@ -173,7 +175,7 @@ def call():
                 _devicePrint(device)
 
         if args.info:
-            _LOGGER.info('async_get_system()...')
+            _LOGGER.info('__main.py__.call().async_get_system()...')
             _LOGGER.info(json.dumps(lupusec.async_get_system(), indent=4, sort_keys=True))       
                 
     except Exception as exc:
