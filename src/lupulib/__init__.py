@@ -119,6 +119,7 @@ class LupusecAPI:
             response_list = await asyncio.gather(*tasks)
             for content in response_list:
                 print(content)
+                return devices.system.LupusecSystem(content)
 
 
             # try to parse json response
