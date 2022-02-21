@@ -93,20 +93,34 @@ class LupusecAPI:
         _LOGGER.debug("async_get_system() called: ")
 
         # Login to Lupusec System
-        url_cmd = CONST.LOGIN_REQUEST
-        _LOGGER.debug("  API-Call: %s", url_cmd)
-        async with self._session as client:
-            data = await _async_api_call(client, url_cmd)
-            _LOGGER.debug(data)
+        #url_cmd = CONST.LOGIN_REQUEST
+        #_LOGGER.debug("  API-Call: %s", url_cmd)
+        #async with self._session as client:
+        #    data = await _async_api_call(client, url_cmd)
+        #    _LOGGER.debug(data)
 
         # Get System Info
-        url_cmd = CONST.INFO_REQUEST
-        _LOGGER.debug("  API-Call: %s", url_cmd)
+        #url_cmd = CONST.INFO_REQUEST
+        #_LOGGER.debug("  API-Call: %s", url_cmd)
+        #async with self._session as client:
+        #    data = await _async_api_call(client, url_cmd) 
+        #    _LOGGER.debug(data)
+        #    return devices.system.LupusecSystem(data)
+
+        # new approach
         async with self._session as client:
-            data = await _async_api_call(client, url_cmd) 
-            _LOGGER.debug(data)
-            return devices.system.LupusecSystem(data)
- 
+            tasks = []
+
+            # LOGIN_REQUEST
+            tasks.append(asyncio.ensure_future(_async_api_call(client, CONST.LOGIN_REQUEST)))
+            # LOGIN_REQUEST
+            tasks.append(asyncio.ensure_future(_async_api_call(client, CONST.INFO_REQUEST)))
+
+            response_list = await asyncio.gather(*tasks)
+            for content in response_list:
+                print(content)
+
+
             # try to parse json response
             # try:
             #     json_data = json.loads(data)["updates"]
