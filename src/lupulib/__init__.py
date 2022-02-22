@@ -32,7 +32,7 @@ import urllib.parse
 import urllib.request
 
 # Import from lupulib
-# import lupulib
+import lupulib
 import lupulib.devices
 import lupulib.constants as CONST
 import lupulib.exceptions
@@ -120,7 +120,7 @@ class LupusecAPI:
             for content in response_list:
                 print(content)
                 _LOGGER.debug("Response Content:", content)
-                # return devices.system.LupusecSystem(content)
+            # return devices.system.LupusecSystem(content)
 
 
             # try to parse json response
