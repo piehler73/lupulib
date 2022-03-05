@@ -146,7 +146,7 @@ def call():
             lupusec = lupulib.LupusecAPI(ip_address=args.ip_address,
                                      username=args.username,
                                      password=args.password)
-            print("LupusecAPI initialized: ", ip_address, ";", username, ";", password)
+            print("LupusecAPI initialized: ", args.ip_address, ";", args.username, ";", args.password)
         
         if args.arm:
             if lupusec.get_alarm().set_away():
