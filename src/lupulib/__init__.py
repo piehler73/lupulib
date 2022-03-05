@@ -63,7 +63,7 @@ class LupusecAPI:
         self._system = None
 
 
-    async def _async_api_call(client, url) -> Dict:
+    async def _async_api_call(client, url):
         """Generic sync method to call the Lupusec API"""
         _LOGGER.debug("_async_api_call() called: ")
 
@@ -114,16 +114,17 @@ class LupusecAPI:
             tasks = []
 
             # LOGIN_REQUEST
-            _LOGGER.debug("__init__.py.async_get_system(): LOGIN_REQUEST=", CONST.LOGIN_REQUEST)
+            _LOGGER.debug("__init__.py.async_get_system(): LOGIN_REQUEST=%s", CONST.LOGIN_REQUEST)
             tasks.append(asyncio.ensure_future(_async_api_call(client, CONST.LOGIN_REQUEST)))
             # INFO_REQUEST
-            _LOGGER.debug("__init__.py.async_get_system(): INFO_REQUEST=", CONST.INFO_REQUEST)
+            _LOGGER.debug("__init__.py.async_get_system(): INFO_REQUEST=%s", CONST.INFO_REQUEST)
             tasks.append(asyncio.ensure_future(_async_api_call(client, CONST.INFO_REQUEST)))
+
 
             response_list = await asyncio.gather(*tasks)
             for content in response_list:
                 print(content)
-                _LOGGER.debug("Response Content:", content)
+                _LOGGER.debug("Response Content: ", content)
             # return devices.system.LupusecSystem(content)
 
 
