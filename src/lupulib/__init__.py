@@ -90,7 +90,9 @@ class LupusecAPI:
 
     async def async_get_system(self) -> None:
         """Async method to get the system info."""
-        _LOGGER.debug("async_get_system() called: ")
+        _LOGGER.debug("__init__.py.async_get_system() called: ")
+        _LOGGER.debug("LupusecAPI: ip-address=%s, username=%s, pwd=%s", 
+            self._ip_address, self._username, self._password)
 
         # Login to Lupusec System
         #url_cmd = CONST.LOGIN_REQUEST
@@ -112,8 +114,10 @@ class LupusecAPI:
             tasks = []
 
             # LOGIN_REQUEST
+            _LOGGER.debug("__init__.py.async_get_system(): LOGIN_REQUEST=", CONST.LOGIN_REQUEST)
             tasks.append(asyncio.ensure_future(_async_api_call(client, CONST.LOGIN_REQUEST)))
-            # LOGIN_REQUEST
+            # INFO_REQUEST
+            _LOGGER.debug("__init__.py.async_get_system(): INFO_REQUEST=", CONST.INFO_REQUEST)
             tasks.append(asyncio.ensure_future(_async_api_call(client, CONST.INFO_REQUEST)))
 
             response_list = await asyncio.gather(*tasks)

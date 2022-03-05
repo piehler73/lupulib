@@ -2,7 +2,7 @@
 
 # Used in setup.py
 # -*- coding: utf-8 -*-
-VERSION = "0.2.39"
+VERSION = "0.2.40"
 PROJECT_PACKAGE_NAME = "lupulib"
 PROJECT_LICENSE = "MIT"
 PROJECT_URL = "http://www.github.com/majuss/lupulib"
