@@ -77,7 +77,7 @@ class LupusecAPI:
                 #print(resp.status)
                 content = await resp.json(content_type=None)
                 print("type of response: ", type(content))
-                print("API-Call finished:")
+                print("API-Call finished.")
                 return content
 
         except aiohttp.client_exceptions.ClientConnectorError:
@@ -121,9 +121,10 @@ class LupusecAPI:
             _LOGGER.debug("__init__.py.async_get_system(): INFO_REQUEST=%s", CONST.INFO_REQUEST)
             tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(client, CONST.INFO_REQUEST)))
 
-
+            # Print response list
             _LOGGER.debug("await asyncio.gather(*tasks)...")
             response_list = await asyncio.gather(*tasks)
+            _LOGGER.debug("done. check content in response_list...")
             for content in response_list:
                 print(content)
                 _LOGGER.debug("Response Content: ", content)
