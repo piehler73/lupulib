@@ -68,10 +68,11 @@ class LupusecAPI:
         _LOGGER.debug("_async_api_call() called: URL=%s", url)
 
         try:
+            _LOGGER.debug("try...")
             async with client.get(url) as resp:
                 _LOGGER.debug("  API-Call: %s", url)
-                if response.status != 200:
-                    _LOGGER.error(f"Response status: {response.status}")
+                if resp.status != 200:
+                    _LOGGER.error(f"Response status: {resp.status}")
                     return {}                
                 print(resp.status)
                 content = await resp.json(content_type=None)
