@@ -70,11 +70,11 @@ class LupusecAPI:
         try:
             _LOGGER.debug("try...")
             async with client.get(url) as resp:
-                _LOGGER.debug("  API-Call: %s", url)
-                if resp.status != 200:
-                    _LOGGER.error(f"Response status: {resp.status}")
-                    return {}                
-                print(resp.status)
+                #_LOGGER.debug("  API-Call: %s", url)
+                #if resp.status != 200:
+                #    _LOGGER.error(f"Response status: {resp.status}")
+                #    return {}                
+                #print(resp.status)
                 content = await resp.json(content_type=None)
                 print("type of response: ", type(content))
                 print("API-Call finished:")
@@ -122,6 +122,7 @@ class LupusecAPI:
             tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(client, CONST.INFO_REQUEST)))
 
 
+            _LOGGER.debug("await asyncio.gather(*tasks)...")
             response_list = await asyncio.gather(*tasks)
             for content in response_list:
                 print(content)
