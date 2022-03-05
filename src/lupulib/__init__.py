@@ -59,13 +59,13 @@ class LupusecAPI:
         self._auth = None
         if self._username != None and self._password != None:
             self._auth = aiohttp.BasicAuth(login=self._username, password=self._password, encoding='utf-8')
-        self._session = aiohttp.ClientSession(auth=self._auth)
+        # self._session = aiohttp.ClientSession(auth=self._auth)
         self._system = None
 
 
     async def _async_api_call(client, url):
         """Generic sync method to call the Lupusec API"""
-        _LOGGER.debug("_async_api_call() called: ")
+        _LOGGER.debug("_async_api_call() called: URL=%s", url)
 
         try:
             async with client.get(url) as resp:
@@ -78,6 +78,7 @@ class LupusecAPI:
                 print("type of response: ", type(content))
                 print("API-Call finished:")
                 return content
+
         except aiohttp.client_exceptions.ClientConnectorError:
             _LOGGER.error("Cannot connect to: ", url)
             return {}
@@ -85,7 +86,6 @@ class LupusecAPI:
         except aiohttp.ContentTypeError:
             _LOGGER.error("JSON decode failed")
             return {}
-
 
 
     async def async_get_system(self) -> None:
@@ -110,7 +110,7 @@ class LupusecAPI:
         #    return devices.system.LupusecSystem(data)
 
         # new approach
-        async with self._session as client:
+        async with aiohttp.ClientSession(auth=self._auth) as client:
             tasks = []
 
             # LOGIN_REQUEST
@@ -126,7 +126,6 @@ class LupusecAPI:
                 print(content)
                 _LOGGER.debug("Response Content: ", content)
             # return devices.system.LupusecSystem(content)
-
 
             # try to parse json response
             # try:
