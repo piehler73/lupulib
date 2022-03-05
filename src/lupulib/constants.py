@@ -2,7 +2,7 @@
 
 # Used in setup.py
 # -*- coding: utf-8 -*-
-VERSION = "0.2.48"
+VERSION = "0.2.49"
 PROJECT_PACKAGE_NAME = "lupulib"
 PROJECT_LICENSE = "MIT"
 PROJECT_URL = "http://www.github.com/majuss/lupulib"
@@ -18,6 +18,8 @@ PROJECT_AUTHOR = "Majuss"
 
 
 # Lupusec API Calls: Requests and Headers
+URL_HTTP = "http://"
+URL_ACTION = "/action/"
 LOGIN_REQUEST = "login"
 INFO_REQUEST = "welcomeGet"
 INFO_HEADER = "updates"

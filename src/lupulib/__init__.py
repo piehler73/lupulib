@@ -63,9 +63,13 @@ class LupusecAPI:
         self._system = None
 
 
-    async def _async_api_call(client, url):
+    async def _async_api_call(client, action_url):
         """Generic sync method to call the Lupusec API"""
-        _LOGGER.debug("_async_api_call() called: URL=%s", url)
+        _LOGGER.debug("_async_api_call() called: Action_URL=%s", action_url)
+
+        # Generate complete URL from Constants.py
+        url = f'{CONST.URL_HTTP}{self._ip_address}{CONST.URL_ACTION}{action_url}'
+        _LOGGER.debug("URL=%s", url)
 
         try:
             _LOGGER.debug("try...")
@@ -115,8 +119,8 @@ class LupusecAPI:
             tasks = []
 
             # LOGIN_REQUEST
-            _LOGGER.debug("__init__.py.async_get_system(): LOGIN_REQUEST=%s", CONST.LOGIN_REQUEST)
-            tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(client, CONST.LOGIN_REQUEST)))
+            #_LOGGER.debug("__init__.py.async_get_system(): LOGIN_REQUEST=%s", CONST.LOGIN_REQUEST)
+            # tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(client, CONST.LOGIN_REQUEST)))
             # INFO_REQUEST
             _LOGGER.debug("__init__.py.async_get_system(): INFO_REQUEST=%s", CONST.INFO_REQUEST)
             tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(client, CONST.INFO_REQUEST)))
