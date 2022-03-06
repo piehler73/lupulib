@@ -65,26 +65,30 @@ class LupusecAPI:
 
     async def _async_api_call(ip, client, action_url):
         """Generic sync method to call the Lupusec API"""
-        _LOGGER.debug("_async_api_call() called: Action_URL=%s", action_url)
 
         # Generate complete URL from Constants.py
         url = f'{CONST.URL_HTTP}{ip}{CONST.URL_ACTION}{action_url}'
-        _LOGGER.debug("URL=%s", url)
+        _LOGGER.debug("_async_api_call() called: URL=%s", url)
 
         try:
-            _LOGGER.debug("try...")
             async with client.get(url) as resp:
-                #_LOGGER.debug("  API-Call: %s", url)
-                #if resp.status != 200:
-                #    _LOGGER.error(f"Response status: {resp.status}")
-                #    return {}                
-                print(resp.status)
-                print(resp.headers['Content-Type'])
+                _LOGGER.debug("Response_Status=%s", resp.status)
+                _LOGGER.debug("Content_Type=%s", resp.headers["content-type"])
+
+                # check for Response Status other than 200
+                if resp.status != 200:
+                    _LOGGER.error(f"ERROR: Response status = {resp.status}")
+                   return {}
+
+                # check for non-JSON Response Headers   
+                if not resp.headers["content-type"].strip().startswith("application/json"):
+                    _LOGGER.error(f"ERROR: Content Type is not JSON = {resp.headers["content-type"]}")
+                    return {}
+
+                # Get Response Body
                 content = await resp.json()
-                #content = await resp.text()
-                print("type of response: ", type(content))
-                print(content)
-                print("API-Call finished.")
+                _LOGGER.debug("Data Type of Response: =%s", type(content))
+                _LOGGER.debug("API-Call finished.")                
                 return content
 
         except aiohttp.client_exceptions.ClientConnectorError:
@@ -124,6 +128,7 @@ class LupusecAPI:
             # LOGIN_REQUEST
             #_LOGGER.debug("__init__.py.async_get_system(): LOGIN_REQUEST=%s", CONST.LOGIN_REQUEST)
             # tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(client, CONST.LOGIN_REQUEST)))
+
             # INFO_REQUEST
             _LOGGER.debug("__init__.py.async_get_system(): INFO_REQUEST=%s", CONST.INFO_REQUEST)
             tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(self._ip_address, client, CONST.INFO_REQUEST)))
@@ -134,18 +139,14 @@ class LupusecAPI:
             _LOGGER.debug("done. check content in response_list...")
             for content in response_list:
                 print(content)
-                #_LOGGER.debug("Response Content: ", content)
-            # return devices.system.LupusecSystem(content)
+                if "updates" in content:
+                    self._system = content["updates"]
+                    _LOGGER.debug("System Info: %s", self._system)                    
+                    print("  Hardware-Version: %s ", self._system["rf_ver"])
+                    print("  Firmware-Version: %s ", self._system["em_ver"])                    
 
-            # try to parse json response
-            # try:
-            #     json_data = json.loads(data)["updates"]
-            #    _LOGGER.debug(json_data)
-            #    print("  Hardware-Version: %s ", json_data["rf_ver"])
-            #    print("  Firmware-Version: %s ", json_data["em_ver"])
-            #    return await devices.system.LupusecSystem(json_data)
-            #except json.JSONDecodeError as exception:
-            #    raise LupusecParseError(str(exception)) from exception
+            # return devices.system.LupusecSystem(content)
+            
         _LOGGER.debug("__init__.py.async_get_system() finished.")            
 
 
