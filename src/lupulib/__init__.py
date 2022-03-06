@@ -80,7 +80,7 @@ class LupusecAPI:
                 #    return {}                
                 #print(resp.status)
                 print(resp.status)
-                print resp.headers['Content-Type']
+                print(resp.headers['Content-Type'])
                 # content = await resp.json()
                 content = await resp.json()
                 print("type of response: ", type(content))
