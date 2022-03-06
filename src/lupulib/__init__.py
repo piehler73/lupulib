@@ -81,7 +81,7 @@ class LupusecAPI:
 
                 # check for non-JSON Response Headers   
                 if not resp.headers["content-type"].strip().startswith("application/json"):
-                    _LOGGER.error(f"ERROR: Content Type is not JSON = {resp.headers["content-type"]}")
+                    _LOGGER.error(f"ERROR: Content Type is not JSON = {resp.headers['content-type']}")
                     return {}
 
                 # Get Response Body
