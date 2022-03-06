@@ -79,8 +79,12 @@ class LupusecAPI:
                 #    _LOGGER.error(f"Response status: {resp.status}")
                 #    return {}                
                 #print(resp.status)
-                content = await resp.json(content_type=None)
+                print(resp.status)
+                print resp.headers['Content-Type']
+                # content = await resp.json()
+                content = await resp.json()
                 print("type of response: ", type(content))
+                print Content
                 print("API-Call finished.")
                 return content
 
