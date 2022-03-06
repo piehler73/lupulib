@@ -82,9 +82,9 @@ class LupusecAPI:
                 print(resp.status)
                 print(resp.headers['Content-Type'])
                 # content = await resp.json()
-                content = await resp.json()
+                content = await resp.text()
                 print("type of response: ", type(content))
-                print Content
+                print(Content)
                 print("API-Call finished.")
                 return content
 
