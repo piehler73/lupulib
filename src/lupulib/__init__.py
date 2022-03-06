@@ -43,7 +43,7 @@ import lupulib.exceptions
 
 _LOGGER = logging.getLogger(__name__)
 home = str(Path.home())
-print(home)
+# print(home)
 
 
 class LupusecAPI:
@@ -59,11 +59,10 @@ class LupusecAPI:
         self._auth = None
         if self._username != None and self._password != None:
             self._auth = aiohttp.BasicAuth(login=self._username, password=self._password, encoding='utf-8')
-        # self._session = aiohttp.ClientSession(auth=self._auth)
         self._system = None
 
 
-    async def _async_api_call(ip, client, action_url):
+    async def _async_api_call(ip, client, action_url) -> Dict:
         """Generic sync method to call the Lupusec API"""
 
         # Generate complete URL from Constants.py
@@ -106,22 +105,7 @@ class LupusecAPI:
         _LOGGER.debug("LupusecAPI: ip-address=%s, username=%s, pwd=%s", 
             self._ip_address, self._username, self._password)
 
-        # Login to Lupusec System
-        #url_cmd = CONST.LOGIN_REQUEST
-        #_LOGGER.debug("  API-Call: %s", url_cmd)
-        #async with self._session as client:
-        #    data = await _async_api_call(client, url_cmd)
-        #    _LOGGER.debug(data)
-
-        # Get System Info
-        #url_cmd = CONST.INFO_REQUEST
-        #_LOGGER.debug("  API-Call: %s", url_cmd)
-        #async with self._session as client:
-        #    data = await _async_api_call(client, url_cmd) 
-        #    _LOGGER.debug(data)
-        #    return devices.system.LupusecSystem(data)
-
-        # new approach
+         # Get System Info
         async with aiohttp.ClientSession(auth=self._auth) as client:
             tasks = []
 
@@ -146,7 +130,7 @@ class LupusecAPI:
                     print("  Firmware-Version: %s ", self._system["em_ver"])                    
 
             # return devices.system.LupusecSystem(content)
-            
+
         _LOGGER.debug("__init__.py.async_get_system() finished.")            
 
 
