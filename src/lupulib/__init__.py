@@ -77,7 +77,7 @@ class LupusecAPI:
                 # check for Response Status other than 200
                 if resp.status != 200:
                     _LOGGER.error(f"ERROR: Response status = {resp.status}")
-                   return {}
+                    return {}
 
                 # check for non-JSON Response Headers   
                 if not resp.headers["content-type"].strip().startswith("application/json"):
