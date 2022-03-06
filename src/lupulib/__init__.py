@@ -78,11 +78,10 @@ class LupusecAPI:
                 #if resp.status != 200:
                 #    _LOGGER.error(f"Response status: {resp.status}")
                 #    return {}                
-                #print(resp.status)
                 print(resp.status)
                 print(resp.headers['Content-Type'])
-                # content = await resp.json()
-                content = await resp.text()
+                content = await resp.json()
+                #content = await resp.text()
                 print("type of response: ", type(content))
                 print(content)
                 print("API-Call finished.")
@@ -135,7 +134,7 @@ class LupusecAPI:
             _LOGGER.debug("done. check content in response_list...")
             for content in response_list:
                 print(content)
-                _LOGGER.debug("Response Content: ", content)
+                #_LOGGER.debug("Response Content: ", content)
             # return devices.system.LupusecSystem(content)
 
             # try to parse json response
@@ -147,6 +146,7 @@ class LupusecAPI:
             #    return await devices.system.LupusecSystem(json_data)
             #except json.JSONDecodeError as exception:
             #    raise LupusecParseError(str(exception)) from exception
+        _LOGGER.debug("__init__.py.async_get_system() finished.")            
 
 
     def _request_post(self, action, params={}):
