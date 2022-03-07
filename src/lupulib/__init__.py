@@ -54,6 +54,8 @@ class LupusecAPI:
         self._username = username
         self._password = password
         self._ip_address = ip_address
+        _LOGGER.debug("LupusecAPI: ip-address=%s, username=%s, pwd=%s", 
+            self._ip_address, self._username, self._password)
         self._url = "http://{}/action/".format(ip_address)
         self._model = "unknown"
         self._auth = None
@@ -86,6 +88,8 @@ class LupusecAPI:
 
                 # Get Response Body
                 content = await resp.json()
+
+                # ToDo: check for empty body, size = 0
                 _LOGGER.debug("Data Type of Response: =%s", type(content))
                 _LOGGER.debug("API-Call finished.")                
                 return content
@@ -102,16 +106,10 @@ class LupusecAPI:
     async def async_get_system(self) -> None:
         """Async method to get the system info."""
         _LOGGER.debug("__init__.py.async_get_system() called: ")
-        _LOGGER.debug("LupusecAPI: ip-address=%s, username=%s, pwd=%s", 
-            self._ip_address, self._username, self._password)
 
          # Get System Info
         async with aiohttp.ClientSession(auth=self._auth) as client:
             tasks = []
-
-            # LOGIN_REQUEST
-            #_LOGGER.debug("__init__.py.async_get_system(): LOGIN_REQUEST=%s", CONST.LOGIN_REQUEST)
-            # tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(client, CONST.LOGIN_REQUEST)))
 
             # INFO_REQUEST
             _LOGGER.debug("__init__.py.async_get_system(): INFO_REQUEST=%s", CONST.INFO_REQUEST)
@@ -123,11 +121,11 @@ class LupusecAPI:
             _LOGGER.debug("done. check content in response_list...")
             for content in response_list:
                 print(content)
-                if "updates" in content:
-                    self._system = content["updates"]
+                if CONST.INFO_HEADER in content:
+                    self._system = content[CONST.INFO_HEADER]
                     _LOGGER.debug("System Info: %s", self._system)                    
-                    print("  Hardware-Version: %s ", self._system["rf_ver"])
-                    print("  Firmware-Version: %s ", self._system["em_ver"])                    
+                    print("  Hardware-Version: ", self._system[CONST.SYS_HW_VERSION])
+                    print("  Firmware-Version: ", self._system[CONST.SYS_SW_VERSION])                    
 
             # return devices.system.LupusecSystem(content)
 
@@ -139,21 +137,6 @@ class LupusecAPI:
             self.api_url + action, data=params, headers=self.headers
         )
 
-    def clean_json(self, textdata):
-        _LOGGER.debug("clean_json(): " + textdata)
-        if self.model == 1:
-            textdata = textdata.replace("\t", "")
-            i = textdata.index("\n")
-            textdata = textdata[i + 1 : -2]
-            try:
-                textdata = yaml.load(textdata, Loader=yaml.BaseLoader)
-            except Exception as e:
-                _LOGGER.warning(
-                    "lupulib couldn't parse provided response: %s, %s", e, textdata
-                )
-            return textdata
-        else:
-            return json.loads(textdata, strict=False)
 
     def get_power_switches(self):
         _LOGGER.debug("get_power_switches() called:")
@@ -179,6 +162,7 @@ class LupusecAPI:
             self._cachePss = powerSwitches
 
         return self._cachePss
+
 
     def get_sensors(self):
         _LOGGER.debug("get_sensors() called:")
@@ -237,15 +221,18 @@ class LupusecAPI:
             _LOGGER.debug("Alarm on XT2 not implemented")
         return panel
 
+ 
     def get_history(self):
         _LOGGER.debug("get_history() called: ")
         response = self._request_get(CONST.HISTORY_REQUEST)
         return self.clean_json(response.text)[CONST.HISTORY_HEADER]
 
+
     def refresh(self):
         _LOGGER.debug("refresh() called: ")
         """Do a full refresh of all devices and automations."""
         self.get_devices(refresh=True)
+
 
     def get_devices(self, refresh=False, generic_type=None):
         _LOGGER.debug("get_devices() called: ")
@@ -323,6 +310,7 @@ class LupusecAPI:
 
         return list(self._devices.values())
 
+
     def get_device(self, device_id, refresh=False):
         """Get a single device."""
         _LOGGER.debug("get_device() called for single device: ")
@@ -337,6 +325,7 @@ class LupusecAPI:
 
         return device
 
+
     def get_alarm(self, area="1", refresh=False):
         """Shortcut method to get the alarm device."""
         _LOGGER.debug("get_alarm() called: ")
@@ -345,23 +334,6 @@ class LupusecAPI:
             refresh = False
 
         return self.get_device(CONST.ALARM_DEVICE_ID, refresh)
-
-
-    def get_info(self):
-        """Shortcut method to get the system info."""
-        _LOGGER.debug("get_info() called: ")
-
-        response = self._request_get(CONST.INFO_REQUEST)
-        json_response = response.json()
-        _LOGGER.debug(json_response)
-        json_data = json_response["updates"]
-        _LOGGER.debug("  Hardware-Version: %s ", json_data["rf_ver"])
-        _LOGGER.debug("  Firmware-Version: %s ", json_data["em_ver"])
-
-        return self.clean_json(response.text)[CONST.INFO_HEADER]
-
- 
-
 
 
     def set_mode(self, mode):
@@ -374,6 +346,23 @@ class LupusecAPI:
         r = self._request_post("panelCondPost", params)
         responseJson = self.clean_json(r.text)
         return responseJson
+
+
+    def clean_json(self, textdata):
+        _LOGGER.debug("clean_json(): " + textdata)
+        if self.model == 1:
+            textdata = textdata.replace("\t", "")
+            i = textdata.index("\n")
+            textdata = textdata[i + 1 : -2]
+            try:
+                textdata = yaml.load(textdata, Loader=yaml.BaseLoader)
+            except Exception as e:
+                _LOGGER.warning(
+                    "lupulib couldn't parse provided response: %s, %s", e, textdata
+                )
+            return textdata
+        else:
+            return json.loads(textdata, strict=False)
 
 
 def newDevice(deviceJson, lupusec):
