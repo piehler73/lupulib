@@ -16,6 +16,7 @@ print(sys.path)
 import requests
 from requests.exceptions import HTTPError
 
+# General Imports
 import pickle
 import time
 import logging
@@ -62,6 +63,33 @@ class LupusecAPI:
         if self._username != None and self._password != None:
             self._auth = aiohttp.BasicAuth(login=self._username, password=self._password, encoding='utf-8')
         self._system = None
+
+        # Try to access local cache file
+        _LOGGER.debug(f"Check for Cache-File: {home + "/" + CONST.HISTORY_CACHE_NAME}")
+        try:
+            self._history_cache = pickle.load(
+                open(home + "/" + CONST.HISTORY_CACHE_NAME, "rb")
+            )
+            _LOGGER.debug("...file exists.")
+        # If local cache file does not exist -> create one    
+        except Exception as e:
+            _LOGGER.debug(e)
+            self._history_cache = []
+            pickle.dump(
+                self._history_cache, open(home + "/" + CONST.HISTORY_CACHE_NAME, "wb")
+            )
+            _LOGGER.debug("...file created.")       
+
+        # Set cache timestamps
+        _LOGGER.debug(f"Cache current timestamp: {time.time()}")       
+        self._cacheStampS = time.time()
+        self._cacheStampP = time.time()
+        #self._panel = self.get_panel()
+
+        # Set device caches to none
+        self._cacheBinarySensors = None
+        self._cacheSensors = None
+        self._cacheSwitches = None
 
 
     async def _async_api_call(ip, client, action_url) -> Dict:
