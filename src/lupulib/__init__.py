@@ -65,7 +65,7 @@ class LupusecAPI:
         self._system = None
 
         # Try to access local cache file
-        _LOGGER.debug(f"Check for Cache-File: {home + "/" + CONST.HISTORY_CACHE_NAME}")
+        _LOGGER.debug(f"Check for Cache-File: {home}/{CONST.HISTORY_CACHE_NAME}")
         try:
             self._history_cache = pickle.load(
                 open(home + "/" + CONST.HISTORY_CACHE_NAME, "rb")
