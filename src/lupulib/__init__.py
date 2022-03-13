@@ -98,7 +98,7 @@ class LupusecAPI:
         url = f'{CONST.URL_HTTP}{ip}{CONST.URL_ACTION}{action_url}'
         _LOGGER.debug("_async_api_call() called: URL=%s", url)
         start_time = time.time()
-        _LOGGER.debug(f"Starttime: {start_time]}")
+        _LOGGER.debug(f"Starttime: {start_time}")
 
         try:
             async with client.get(url) as resp:
