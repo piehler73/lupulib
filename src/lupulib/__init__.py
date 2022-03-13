@@ -324,7 +324,7 @@ class LupusecAPI:
             # Call api_get_devices()
 
             _LOGGER.debug("...starting API-Call api_get_devices()...")
-            responseObject = await api_get_devices(self)
+            responseObject = await LupusecAPI.api_get_devices(self)
             #if responseObject and not isinstance(responseObject, (tuple, list)):
             #    responseObject = responseObject
             _LOGGER.debug("...API-Call: response received...")
