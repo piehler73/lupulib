@@ -308,7 +308,7 @@ class LupusecAPI:
         self.get_devices(refresh=True)
 
 
-    async def get_devices(self, refresh=True, generic_type=None) - Dict:
+    async def get_devices(self, refresh=True, generic_type=None) -> Dict:
         """Get all devices from Lupusec."""
         _LOGGER.debug("get_devices() called: ")
         # Make API-call only, if device list is empty or needs refresh
