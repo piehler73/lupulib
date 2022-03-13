@@ -241,7 +241,6 @@ class LupusecAPI:
                 # Retreive Device Liste from Response
                 if CONST.DEVICE_LIST_HEADER in content:
                     device_content = content[CONST.DEVICE_LIST_HEADER]
-                    print device_content
                     api_devices = []
                     for device in device_content:
                         if "openClose" in device:
@@ -331,7 +330,7 @@ class LupusecAPI:
             _LOGGER.debug("...API-Call: response received...")
             _LOGGER.debug("...iterate over all devices in responseObject:")
             for deviceJson in responseObject:
-                print deviceJson
+                print(deviceJson)
                 # Attempt to reuse an existing device
                 device = self._devices.get(deviceJson["name"])
                 _LOGGER.debug("...device: " + deviceJson["name"])
