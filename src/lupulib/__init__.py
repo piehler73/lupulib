@@ -94,10 +94,11 @@ class LupusecAPI:
 
     async def _async_api_call(ip, client, action_url) -> Dict:
         """Generic sync method to call the Lupusec API"""
-
         # Generate complete URL from Constants.py
         url = f'{CONST.URL_HTTP}{ip}{CONST.URL_ACTION}{action_url}'
         _LOGGER.debug("_async_api_call() called: URL=%s", url)
+        start_time = time.time()
+        _LOGGER.debug(f"Starttime: {start_time]}")
 
         try:
             async with client.get(url) as resp:
@@ -119,7 +120,10 @@ class LupusecAPI:
 
                 # ToDo: check for empty body, size = 0
                 _LOGGER.debug("Data Type of Response: =%s", type(content))
-                _LOGGER.debug("API-Call finished.")                
+                end_time = time.time()
+                _LOGGER.debug(f"Endtime: {end_time}")   
+                _LOGGER.debug(f"Duration: {end_time - start_time} seconds") 
+                _LOGGER.debug("API-Call finished.")              
                 return content
 
         except aiohttp.client_exceptions.ClientConnectorError:
@@ -140,7 +144,7 @@ class LupusecAPI:
             tasks = []
 
             # INFO_REQUEST
-            _LOGGER.debug("__init__.py.async_get_system(): INFO_REQUEST=%s", CONST.INFO_REQUEST)
+            _LOGGER.debug("__init__.py.async_get_system(): REQUEST=%s", CONST.INFO_REQUEST)
             tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(self._ip_address, client, CONST.INFO_REQUEST)))
 
             # Print response list
@@ -214,6 +218,48 @@ class LupusecAPI:
 
         return self._cacheSensors
 
+
+    async def api_get_devices(self) -> Dict:
+        """Async method to get the device list from Lupusec System."""
+        _LOGGER.debug("__init__.py.async_get_devices() called: ")
+        # Get System Info
+        async with aiohttp.ClientSession(auth=self._auth) as client:
+            tasks = []
+
+            # Device List REQUEST
+            _LOGGER.debug("__init__.py.async_get_devices(): REQUEST=%s", CONST.DEVICE_LIST_REQUEST)
+            tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(self._ip_address, client, CONST.DEVICE_LIST_REQUEST)))
+
+            # Print response list
+            _LOGGER.debug("await asyncio.gather(*tasks)...")
+            response_list = await asyncio.gather(*tasks)
+            _LOGGER.debug("done. check content in response_list...")
+            for content in response_list:
+                print(content)
+                # Retreive Device Liste from Response
+                if CONST.DEVICE_LIST_HEADER in content:
+                    device_content = content[CONST.DEVICE_LIST_HEADER]
+                    api_devices = []
+                    for device in device_content:
+                        if "openClose" in device:
+                                device["status"] = device["openClose"]
+                                device.pop("openClose")
+                        device["device_id"] = device[self.api_device_id]
+                        device.pop("cond")
+                        device.pop(self.api_device_id)
+                        if device["status"] == "{WEB_MSG_DC_OPEN}":
+                            print("yes is open " + device["name"])
+                            device["status"] = 1
+                        if device["status"] == "{WEB_MSG_DC_CLOSE}" or device["status"] == "0":
+                            device["status"] = "Geschlossen"
+                        api_devices.append(device)
+                self._apiDevices = api_devices
+
+        _LOGGER.debug("__init__.py.async_get_devices() finished.")            
+        return self._apiDevices
+
+
+
     def get_panel(self):
         _LOGGER.debug("get_panel() called:")
 	    # we are trimming the json from Lupusec heavily, since its bullcrap
@@ -262,19 +308,25 @@ class LupusecAPI:
         self.get_devices(refresh=True)
 
 
-    def get_devices(self, refresh=False, generic_type=None):
-        _LOGGER.debug("get_devices() called: ")
+    async def get_devices(self, refresh=True, generic_type=None) - Dict:
         """Get all devices from Lupusec."""
-        _LOGGER.info("Updating all devices...")
+        _LOGGER.debug("get_devices() called: ")
+        # Make API-call only, if device list is empty or needs refresh
         if refresh or self._devices is None:
+            _LOGGER.debug("...refreshing all devices...")
             if self._devices is None:
                 self._devices = {}
 
-            responseObject = self.get_sensors()
-            if responseObject and not isinstance(responseObject, (tuple, list)):
-                responseObject = responseObject
+            # timestamp_now = time.time()
+            # if self._cacheSensors is None or timestamp_now - self._cacheStampS > CONST.UPDATE_FREQ:
+            # Call api_get_devices()
 
-            _LOGGER.debug("...iterate over all devices on responseObject:")
+            _LOGGER.debug("...starting API-Call api_get_devices()...")
+            responseObject = await api_get_devices(self)
+            #if responseObject and not isinstance(responseObject, (tuple, list)):
+            #    responseObject = responseObject
+            _LOGGER.debug("...API-Call: response received...")
+            _LOGGER.debug("...iterate over all devices in responseObject:")
             for deviceJson in responseObject:
                 # Attempt to reuse an existing device
                 device = self._devices.get(deviceJson["name"])

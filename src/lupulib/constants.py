@@ -2,7 +2,9 @@
 
 # Used in setup.py
 # -*- coding: utf-8 -*-
-VERSION = "0.3.10"
+
+# Project Information
+VERSION = "0.3.11"
 PROJECT_PACKAGE_NAME = "lupulib"
 PROJECT_LICENSE = "MIT"
 PROJECT_URL = "http://www.github.com/majuss/lupulib"
@@ -14,16 +16,19 @@ PROJECT_LONG_DESCRIPTION = (
     " smart home services to get a full"
     " integration of all you devices."
 )
-PROJECT_AUTHOR = "Majuss"
+PROJECT_AUTHOR = "piehler73"
 
 
 # Lupusec API Calls: Requests and Headers
 URL_HTTP = "http://"
 URL_ACTION = "/action/"
+UPDATE_FREQ = 2
+
 LOGIN_REQUEST = "login"
 INFO_REQUEST = "welcomeGet"
 INFO_HEADER = "updates"
-
+DEVICE_LIST_REQUEST = "deviceListGet"
+DEVICE_LIST_HEADER = "senrows"
 HISTORY_REQUEST = "historyGet"
 HISTORY_ALARM_COLUMN = "a"
 HISTORY_HEADER = "hisrows"
@@ -74,6 +79,7 @@ TYPE_TRANSLATION = {
     TYPE_WATER_XT2: "Wassermelder",
     TYPE_SMOKE_XT2: "Rauchmelder",
 }
+
 DEVICES_API_XT1 = "sensorListGet"
 DEVICES_API_XT2 = "deviceListGet"
 

@@ -173,8 +173,9 @@ def call():
             _LOGGER.info('Mode of panel: %s', lupusec.get_alarm().mode)
         
         if args.devices:
-            for device in lupusec.get_devices():
-                _devicePrint(device)
+            _LOGGER.debug('__main.py__.call().async_get_devices()...')
+            asyncio.run(lupusec.get_devices())
+            _LOGGER.info('__main.py__.call().async_get_devices()...finished.')
 
         if args.info:
             _LOGGER.debug('__main.py__.call().async_get_system()...')
