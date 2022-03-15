@@ -121,7 +121,7 @@ class LupusecAPI:
                 content = await resp.json()
 
                 # ToDo: check for empty body, size = 0
-                content = content .replace(chr(245), "")
+                content = content.replace(chr(245), "")
                 _LOGGER.debug("Data Type of Response: =%s", type(content))
                 end_time = time.time()
                 _LOGGER.debug(f"Endtime: {end_time}")   
