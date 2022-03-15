@@ -118,17 +118,19 @@ class LupusecAPI:
                     return {}
 
                 # Get Response Body
-                content = await resp.json()
+                # content = await resp.json()
+                content = await resp.text()
 
                 # ToDo: check for empty body, size = 0
                 content = content.replace(chr(245), "")
                 content = content.replace("\t", "")
+                clean_content = json.loads(response.text)
                 _LOGGER.debug("Data Type of Response: =%s", type(content))
                 end_time = time.time()
                 _LOGGER.debug(f"Endtime: {end_time}")   
                 _LOGGER.debug(f"Duration: {end_time - start_time} seconds") 
                 _LOGGER.debug("API-Call finished.")              
-                return content
+                return clean_content
 
         except aiohttp.client_exceptions.ClientConnectorError:
             _LOGGER.error("Cannot connect to: ", url)
