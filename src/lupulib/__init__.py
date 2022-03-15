@@ -121,6 +121,7 @@ class LupusecAPI:
                 content = await resp.json()
 
                 # ToDo: check for empty body, size = 0
+                content = content .replace(chr(245), "")
                 _LOGGER.debug("Data Type of Response: =%s", type(content))
                 end_time = time.time()
                 _LOGGER.debug(f"Endtime: {end_time}")   
@@ -431,21 +432,9 @@ class LupusecAPI:
         return responseJson
 
 
-    def clean_json(self, textdata):
-        _LOGGER.debug("clean_json(): " + textdata)
-        if self.model == 1:
-            textdata = textdata.replace("\t", "")
-            i = textdata.index("\n")
-            textdata = textdata[i + 1 : -2]
-            try:
-                textdata = yaml.load(textdata, Loader=yaml.BaseLoader)
-            except Exception as e:
-                _LOGGER.warning(
-                    "lupulib couldn't parse provided response: %s, %s", e, textdata
-                )
-            return textdata
-        else:
-            return json.loads(textdata, strict=False)
+    def clean_json(textdata):
+            # textdata = textdata.replace(chr(245), "")
+        return textdata
 
 
 def newDevice(deviceJson, lupusec):
