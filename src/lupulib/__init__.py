@@ -124,8 +124,8 @@ class LupusecAPI:
                 # ToDo: check for empty body, size = 0
                 content = content.replace(chr(245), "")
                 content = content.replace("\t", "")
-                clean_content = json.loads(response.text)
-                _LOGGER.debug("Data Type of Response: =%s", type(content))
+                clean_content = json.loads(content)
+                _LOGGER.debug("Data Type of Response: =%s", type(clean_content))
                 end_time = time.time()
                 _LOGGER.debug(f"Endtime: {end_time}")   
                 _LOGGER.debug(f"Duration: {end_time - start_time} seconds") 
