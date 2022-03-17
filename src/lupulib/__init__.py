@@ -350,7 +350,7 @@ class LupusecAPI:
                     device.update(deviceJson)
                 else:
                     _LOGGER.debug("...newDevice found: " + deviceJson["name"])
-                    device = self.newDevice(deviceJson, self)
+                    device = LupusecAPI.newDevice(deviceJson, self)
 
                     if not device:
                         _LOGGER.info("Device is unknown")
