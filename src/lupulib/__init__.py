@@ -1,6 +1,7 @@
 # SYS imports
 import os
 import sys
+from trace import Trace
 
 # Append subdirectories to sys.path
 ppath = os.path.abspath(os.path.join(os.path.dirname(__file__),os.pardir))
@@ -13,15 +14,15 @@ sys.path.append(fpath)
 print(sys.path)
 
 # Old imports for API Calls
-import requests
-from requests.exceptions import HTTPError
+# import requests
+# from requests.exceptions import HTTPError
 
 # General Imports
 import pickle
 import time
 import logging
 import json
-import yaml
+# import yaml
 from pathlib import Path
 
 # New imports to optimize API-Calls
@@ -35,6 +36,9 @@ import urllib.request
 # Import from lupulib
 import lupulib
 import lupulib.devices
+from lupulib.devices.binary_sensor import LupusecBinarySensor
+from lupulib.devices.switch import LupusecSwitch
+import lupulib.devices.switch
 import lupulib.constants as CONST
 import lupulib.exceptions
 # from lupulib.exceptions import LupusecParseError, LupusecRequestError, LupusecResponseError
@@ -245,19 +249,21 @@ class LupusecAPI:
                 # Retreive Device Liste from Response
                 if CONST.DEVICE_LIST_HEADER in content:
                     device_content = content[CONST.DEVICE_LIST_HEADER]
+                    print(json.dumps(device_content, indent = 2, sort_keys=Trace))
+                    print("Number of devices=", len(device_content))                    
                     api_devices = []
                     for device in device_content:
-                        if "openClose" in device:
-                                device["status"] = device["openClose"]
-                                device.pop("openClose")
-                        device["device_id"] = device[self.api_device_id]
-                        device.pop("cond")
-                        device.pop(self.api_device_id)
-                        if device["status"] == "{WEB_MSG_DC_OPEN}":
-                            print("yes is open " + device["name"])
-                            device["status"] = 1
-                        if device["status"] == "{WEB_MSG_DC_CLOSE}" or device["status"] == "0":
-                            device["status"] = "Geschlossen"
+                        #if "openClose" in device:
+                        #        device["status"] = device["openClose"]
+                        #        device.pop("openClose")
+                        #device["device_id"] = device[self.api_device_id]
+                        #device.pop("cond")
+                        #device.pop(self.api_device_id)
+                        #if device["status"] == "{WEB_MSG_DC_OPEN}":
+                        #    print("yes is open " + device["name"])
+                        #    device["status"] = 1
+                        #if device["status"] == "{WEB_MSG_DC_CLOSE}" or device["status"] == "0":
+                        #    device["status"] = "Geschlossen"
                         api_devices.append(device)
                 self._apiDevices = api_devices
 
