@@ -264,6 +264,8 @@ class LupusecAPI:
                         #    device["status"] = 1
                         #if device["status"] == "{WEB_MSG_DC_CLOSE}" or device["status"] == "0":
                         #    device["status"] = "Geschlossen"
+                        print("sid: ", device["sid"], ", name: ", device["name"], 
+                            ", type: ", device["type"], ", status: ", device["status"])
                         api_devices.append(device)
                 self._apiDevices = api_devices
 
@@ -288,7 +290,7 @@ class LupusecAPI:
         panel["type"] = CONST.ALARM_TYPE
         panel["name"] = CONST.ALARM_NAME
 
-        # history = self.get_history()
+        history = self.get_history()
 
         if self.model == 1:
             for histrow in history:
@@ -350,7 +352,7 @@ class LupusecAPI:
                     device.update(deviceJson)
                 else:
                     _LOGGER.debug("...newDevice found: " + deviceJson["name"])
-                    device = LupusecAPI.newDevice(deviceJson, self)
+                    device = newDevice(deviceJson, self)
 
                     if not device:
                         _LOGGER.info("Device is unknown")
