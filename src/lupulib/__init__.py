@@ -245,11 +245,9 @@ class LupusecAPI:
             response_list = await asyncio.gather(*tasks)
             _LOGGER.debug("done. check content in response_list...")
             for content in response_list:
-                print(content)
                 # Retreive Device Liste from Response
                 if CONST.DEVICE_LIST_HEADER in content:
                     device_content = content[CONST.DEVICE_LIST_HEADER]
-                    print(json.dumps(device_content, indent = 2, sort_keys=Trace))
                     print("Number of devices=", len(device_content))                    
                     api_devices = []
                     for device in device_content:
@@ -342,7 +340,8 @@ class LupusecAPI:
             _LOGGER.debug("...API-Call: response received...")
             _LOGGER.debug("...iterate over all devices in responseObject:")
             for deviceJson in responseObject:
-                print(deviceJson)
+                print("sid: ", deviceJson["sid"], ", name: ", deviceJson["name"], 
+                            ", type: ", deviceJson["type"])
                 # Attempt to reuse an existing device
                 device = self._devices.get(deviceJson["name"])
                 _LOGGER.debug("...device: " + deviceJson["name"])
@@ -361,47 +360,43 @@ class LupusecAPI:
                     self._devices[device.device_id] = device
 
             # We will be treating the Lupusec panel itself as an armable device.
-            panelJson = self.get_panel()
-            _LOGGER.debug("Get the panel in get_devices: %s", panelJson)
+            #panelJson = self.get_panel()
+            #_LOGGER.debug("Get the panel in get_devices: %s", panelJson)
+            #self._panel.update(panelJson)
 
-            self._panel.update(panelJson)
-
-            alarmDevice = self._devices.get("0")
-
-            if alarmDevice:
-                alarmDevice.update(panelJson)
-            else:
-                alarmDevice = devices.LupusecAlarm.create_alarm(panelJson, self)
-                self._devices["0"] = alarmDevice
+            # alarmDevice = self._devices.get("0")
+            #if alarmDevice:
+            #    alarmDevice.update(panelJson)
+            #else:
+            #    alarmDevice = devices.LupusecAlarm.create_alarm(panelJson, self)
+            #    self._devices["0"] = alarmDevice
 
             # Now we will handle the power switches
-            if self.model == 1:
-                switches = self.get_power_switches()
-                _LOGGER.debug("Get active the power switches in get_devices: %s", switches)
-
-                for deviceJson in switches:
+            #if self.model == 1:
+            #    switches = self.get_power_switches()
+            #    _LOGGER.debug("Get active the power switches in get_devices: %s", switches)
+            #    for deviceJson in switches:
                     # Attempt to reuse an existing device
-                    device = self._devices.get(deviceJson["name"])
-
+            #        device = self._devices.get(deviceJson["name"])
                     # No existing device, create a new one
-                    if device:
-                        device.update(deviceJson)
-                    else:
-                        device = self.newDevice(deviceJson, self)
-                        if not device:
-                            _LOGGER.info("Device is unknown")
-                            continue
-                        self._devices[device.device_id] = device
+            #        if device:
+            #            device.update(deviceJson)
+            #        else:
+            #            device = self.newDevice(deviceJson, self)
+            #            if not device:
+            #                _LOGGER.info("Device is unknown")
+            #                continue
+            #            self._devices[device.device_id] = device
 
-            elif self.model == 2:
-                _LOGGER.debug("Power switches for XT2 not implemented")
+            #elif self.model == 2:
+            #    _LOGGER.debug("Power switches for XT2 not implemented")
 
-        if generic_type:
-            devices = []
-            for device in self._devices.values():
-                if device.type is not None and device.type in generic_type[0]:
-                    devices.append(device)
-            return devices
+        #if generic_type:
+        #    devices = []
+        #    for device in self._devices.values():
+        #        if device.type is not None and device.type in generic_type[0]:
+        #            devices.append(device)
+        #    return devices
 
         return list(self._devices.values())
 
