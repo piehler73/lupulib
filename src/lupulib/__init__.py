@@ -37,8 +37,10 @@ import urllib.request
 import lupulib
 import lupulib.devices
 from lupulib.devices.binary_sensor import LupusecBinarySensor
+from lupulib.devices.sensor import LupusecSensor
 from lupulib.devices.switch import LupusecSwitch
-import lupulib.devices.switch
+from lupulib.devices.thermal_switch import LupusecThemalSwitch
+from lupulib.devices.updown_switch import LupusecUpDownSwitch
 import lupulib.constants as CONST
 import lupulib.exceptions
 # from lupulib.exceptions import LupusecParseError, LupusecRequestError, LupusecResponseError
@@ -451,12 +453,16 @@ def newDevice(deviceJson, lupusec):
     if not type_tag:
         _LOGGER.info("Device has no type")
 
-    if type_tag in CONST.TYPE_OPENING:
+    if type_tag in CONST.TYPES_BIN_SENSOR:
         return LupusecBinarySensor(deviceJson, lupusec)
-    elif type_tag in CONST.TYPE_SENSOR:
-        return LupusecBinarySensor(deviceJson, lupusec)
-    elif type_tag in CONST.TYPE_SWITCH:
+    elif type_tag in CONST.TYPES_SENSOR:
+        return LupusecSensor(deviceJson, lupusec)
+    elif type_tag in CONST.TYPES_SWITCH:
         return LupusecSwitch(deviceJson, lupusec)
+    elif type_tag in CONST.TYPES_UPDOWN_SWITCH:
+        return LupusecThemalSwitch(deviceJson, lupusec)
+    elif type_tag in CONST.TYPES_THERMAL_SWITCH:
+        return LupusecUpDownSwitch(deviceJson, lupusec)                
     else:
         _LOGGER.info("Device is not known")
     return None
