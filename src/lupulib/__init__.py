@@ -426,19 +426,19 @@ def newDevice(deviceJson, lupusec):
         _LOGGER.info("Device has no type")
 
     if type_tag in CONST.TYPES_BIN_SENSOR:
-        _LOGGER.debug("newDevice(): name: " + deviceJson["name"], "; type: ", type_tag, " = BIN_SENSOR")
+        _LOGGER.debug("newDevice(): name: " + deviceJson["name"] + "; type: " + type_tag + " = BIN_SENSOR")
         return LupusecBinarySensor(deviceJson, lupusec)
     elif type_tag in CONST.TYPES_SENSOR:
-        _LOGGER.debug("newDevice(): name=" + deviceJson["name"], "; type=", type_tag, " = SENSOR")        
+        _LOGGER.debug("newDevice(): name=" + deviceJson["name"] + "; type=" + type_tag + " = SENSOR")        
         return LupusecSensor(deviceJson, lupusec)
     elif type_tag in CONST.TYPES_SWITCH:
-        _LOGGER.debug("newDevice(): name=" + deviceJson["name"], "; type=", type_tag, "= SWITCH")        
+        _LOGGER.debug("newDevice(): name=" + deviceJson["name"] + "; type=" + type_tag + "= SWITCH")        
         return LupusecSwitch(deviceJson, lupusec)
     elif type_tag in CONST.TYPES_UPDOWN_SWITCH:
-        _LOGGER.debug("newDevice(): name=" + deviceJson["name"], "; type=", type_tag, "= UPDOWN_SWITCH")        
+        _LOGGER.debug("newDevice(): name=" + deviceJson["name"] + "; type=" + type_tag + "= UPDOWN_SWITCH")        
         return LupusecThemalSwitch(deviceJson, lupusec)
     elif type_tag in CONST.TYPES_THERMAL_SWITCH:
-        _LOGGER.debug("newDevice(): name=" + deviceJson["name"], "; type=", type_tag, "= THERMAL_SWITCH")        
+        _LOGGER.debug("newDevice(): name=" + deviceJson["name"] + "; type=" + type_tag + "= THERMAL_SWITCH")        
         return LupusecUpDownSwitch(deviceJson, lupusec)                
     else:
         _LOGGER.info("Device is not known")
