@@ -4,7 +4,7 @@
 # -*- coding: utf-8 -*-
 
 # Project Information
-VERSION = "0.3.28"
+VERSION = "0.3.30"
 PROJECT_PACKAGE_NAME = "lupulib"
 PROJECT_LICENSE = "MIT"
 PROJECT_URL = "http://www.github.com/majuss/lupulib"
@@ -76,6 +76,16 @@ TYPES_SENSOR = [TYPE_WATER_XT2, TYPE_SMOKE_XT2]
 TYPES_SWITCH = [TYPE_SWITCH_INT_XT2, TYPE_SWITCH_EXT_XT2]
 TYPES_UPDOWN_SWITCH = [TYPE_UPDOWN_SWITCH_XT2]
 TYPES_THERMAL_SWITCH = [TYPE_THERMAL_SWITCH_XT2]
+
+
+# Type Translations
+TYPE_TRANSLATION = {
+    "Fensterkontakt": "window",
+    "Türkontakt": "door",
+    TYPE_BIN_SENSOR_XT2: "Fenster-/Türkontakt",
+    TYPE_WATER_XT2: "Wassermelder",
+    TYPE_SMOKE_XT2: "Rauchmelder",
+}
 
 
 # Alarm Modes and Zones
