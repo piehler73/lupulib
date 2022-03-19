@@ -322,7 +322,7 @@ class LupusecAPI:
         self.get_devices(refresh=True)
 
 
-    async def get_devices(self, refresh=True, generic_type=None) -> Dict:
+    async def get_devices(self, refresh=True) -> Dict:
         """Get all devices from Lupusec."""
         _LOGGER.debug("get_devices() called: ")
         # Make API-call only, if device list is empty or needs refresh
@@ -343,7 +343,7 @@ class LupusecAPI:
             _LOGGER.debug("...iterate over all devices in responseObject:")
             for deviceJson in responseObject:
                 print("sid: ", deviceJson["sid"], ", name: ", deviceJson["name"], 
-                            ", type: ", deviceJson["type"])
+                            ", type: ", deviceJson["type"], ", status: ", deviceJson["status"])
                 # Attempt to reuse an existing device
                 device = self._devices.get(deviceJson["name"])
                 _LOGGER.debug("...device: " + deviceJson["name"])
@@ -372,33 +372,6 @@ class LupusecAPI:
             #else:
             #    alarmDevice = devices.LupusecAlarm.create_alarm(panelJson, self)
             #    self._devices["0"] = alarmDevice
-
-            # Now we will handle the power switches
-            #if self.model == 1:
-            #    switches = self.get_power_switches()
-            #    _LOGGER.debug("Get active the power switches in get_devices: %s", switches)
-            #    for deviceJson in switches:
-                    # Attempt to reuse an existing device
-            #        device = self._devices.get(deviceJson["name"])
-                    # No existing device, create a new one
-            #        if device:
-            #            device.update(deviceJson)
-            #        else:
-            #            device = self.newDevice(deviceJson, self)
-            #            if not device:
-            #                _LOGGER.info("Device is unknown")
-            #                continue
-            #            self._devices[device.device_id] = device
-
-            #elif self.model == 2:
-            #    _LOGGER.debug("Power switches for XT2 not implemented")
-
-        #if generic_type:
-        #    devices = []
-        #    for device in self._devices.values():
-        #        if device.type is not None and device.type in generic_type[0]:
-        #            devices.append(device)
-        #    return devices
 
         return list(self._devices.values())
 
@@ -447,21 +420,25 @@ class LupusecAPI:
 
 def newDevice(deviceJson, lupusec):
     """Create new device object for the given type."""
-    _LOGGER.debug("newDevice() called: name=" + deviceJson["name"])
     type_tag = deviceJson.get("type")
 
     if not type_tag:
         _LOGGER.info("Device has no type")
 
     if type_tag in CONST.TYPES_BIN_SENSOR:
+        _LOGGER.debug("newDevice(): name: " + deviceJson["name"], "; type: ", type_tag, " = BIN_SENSOR")
         return LupusecBinarySensor(deviceJson, lupusec)
     elif type_tag in CONST.TYPES_SENSOR:
+        _LOGGER.debug("newDevice(): name=" + deviceJson["name"], "; type=", type_tag, " = SENSOR")        
         return LupusecSensor(deviceJson, lupusec)
     elif type_tag in CONST.TYPES_SWITCH:
+        _LOGGER.debug("newDevice(): name=" + deviceJson["name"], "; type=", type_tag, "= SWITCH")        
         return LupusecSwitch(deviceJson, lupusec)
     elif type_tag in CONST.TYPES_UPDOWN_SWITCH:
+        _LOGGER.debug("newDevice(): name=" + deviceJson["name"], "; type=", type_tag, "= UPDOWN_SWITCH")        
         return LupusecThemalSwitch(deviceJson, lupusec)
     elif type_tag in CONST.TYPES_THERMAL_SWITCH:
+        _LOGGER.debug("newDevice(): name=" + deviceJson["name"], "; type=", type_tag, "= THERMAL_SWITCH")        
         return LupusecUpDownSwitch(deviceJson, lupusec)                
     else:
         _LOGGER.info("Device is not known")

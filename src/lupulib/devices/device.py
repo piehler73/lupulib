@@ -30,8 +30,7 @@ class LupusecDevice(object):
             self._name = self._generic_type + ' ' + self.device_id
 
     def get_value(self, name):
-        """Get a value from the json object.
-        """
+        """Get a value from the json object."""
 
         return self._json_state.get(name)
 
