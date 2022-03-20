@@ -147,7 +147,7 @@ class LupusecAPI:
             return {}
 
 
-    async def _async_api_post(ip, client, action_url, params={}) -> Dict:
+    async def _async_api_post(ip, client, action_url, params) -> Dict:
         """Generic sync method to call the Lupusec API"""
         # Generate complete URL from Constants.py
         url = f'{CONST.URL_HTTP}{ip}{CONST.URL_ACTION}{action_url}'
@@ -156,7 +156,7 @@ class LupusecAPI:
         _LOGGER.debug(f"Starttime: {start_time}")
 
         try:
-            async with client.post(url, params) as resp:
+            async with client.post(url, data=params) as resp:
                 _LOGGER.debug("Response_Status=%s", resp.status)
                 _LOGGER.debug("Content_Type=%s", resp.headers["content-type"])
 
