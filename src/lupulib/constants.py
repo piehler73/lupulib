@@ -4,7 +4,7 @@
 # -*- coding: utf-8 -*-
 
 # Project Information
-VERSION = "0.3.33"
+VERSION = "0.3.34"
 PROJECT_PACKAGE_NAME = "lupulib"
 PROJECT_LICENSE = "MIT"
 PROJECT_URL = "http://www.github.com/majuss/lupulib"
@@ -27,6 +27,7 @@ UPDATE_FREQ = 2
 LOGIN_REQUEST = "login"
 INFO_REQUEST = "welcomeGet"
 INFO_HEADER = "updates"
+SET_ALARM_REQUEST = "panelCondPost"
 DEVICE_LIST_REQUEST = "deviceListGet"
 DEVICE_LIST_HEADER = "senrows"
 HISTORY_REQUEST = "historyGet"

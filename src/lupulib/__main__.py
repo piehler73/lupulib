@@ -149,11 +149,15 @@ def call():
             print("LupusecAPI initialized: ", args.ip_address, ";", args.username, ";", args.password)
         
         if args.arm:
-            if lupusec.get_alarm().set_away():
-                _LOGGER.info('Alarm mode changed to armed')
-            else:
-                _LOGGER.warning('Failed to change alarm mode to armed')
-        
+            #if lupusec.get_alarm().set_away():
+            #    _LOGGER.info('Alarm mode changed to armed')
+            #else:
+            #    _LOGGER.warning('Failed to change alarm mode to armed')
+            _LOGGER.debug('__main.py__.call().async_set_mode()...')
+            asyncio.run(lupusec.async_set_mode(1))
+            _LOGGER.info('__main.py__.call().async_set_mode()...finished.')
+
+
         if args.disarm:
             if lupusec.get_alarm().set_standby():
                 _LOGGER.info('Alarm mode changed to disarmed')

@@ -147,6 +147,53 @@ class LupusecAPI:
             return {}
 
 
+    async def _async_api_post(ip, client, action_url, params={}) -> Dict:
+        """Generic sync method to call the Lupusec API"""
+        # Generate complete URL from Constants.py
+        url = f'{CONST.URL_HTTP}{ip}{CONST.URL_ACTION}{action_url}'
+        _LOGGER.debug("_async_api_post() called: URL=%s", url)
+        start_time = time.time()
+        _LOGGER.debug(f"Starttime: {start_time}")
+
+        try:
+            async with client.post(url), params as resp:
+                _LOGGER.debug("Response_Status=%s", resp.status)
+                _LOGGER.debug("Content_Type=%s", resp.headers["content-type"])
+
+                # check for Response Status other than 200
+                if resp.status != 200:
+                    _LOGGER.error(f"ERROR: Response status = {resp.status}")
+                    return {}
+
+                # check for non-JSON Response Headers   
+                if not resp.headers["content-type"].strip().startswith("application/json"):
+                    _LOGGER.error(f"ERROR: Content Type is not JSON = {resp.headers['content-type']}")
+                    return {}
+
+                # Get Response Body
+                # content = await resp.json()
+                content = await resp.text()
+
+                # ToDo: check for empty body, size = 0
+                content = content.replace(chr(245), "")
+                content = content.replace("\t", "")
+                clean_content = json.loads(content)
+                _LOGGER.debug("Data Type of Response: =%s", type(clean_content))
+                end_time = time.time()
+                _LOGGER.debug(f"Endtime: {end_time}")   
+                _LOGGER.debug(f"Duration: {end_time - start_time} seconds") 
+                _LOGGER.debug("API-Call finished.")              
+                return clean_content
+
+        except aiohttp.client_exceptions.ClientConnectorError:
+            _LOGGER.error("Cannot connect to: ", url)
+            return {}
+
+        except aiohttp.ContentTypeError:
+            _LOGGER.error("JSON decode failed")
+            return {}
+
+
     async def async_get_system(self) -> None:
         """Async method to get the system info."""
         _LOGGER.debug("__init__.py.async_get_system() called: ")
@@ -176,10 +223,29 @@ class LupusecAPI:
         _LOGGER.debug("__init__.py.async_get_system() finished.")            
 
 
-    def _request_post(self, action, params={}):
-        return self.session.post(
-            self.api_url + action, data=params, headers=self.headers
-        )
+    async def async_set_mode(self, mode) -> None:
+        """Async method to set alarm mode."""
+        _LOGGER.debug("__init__.py.async_set_mode() called: ")
+        _LOGGER.info("...mode: ", mode)
+
+        params = {"mode": mode, "area": 1}
+
+         # Set Alarm Mode
+        async with aiohttp.ClientSession(auth=self._auth) as client:
+            tasks = []
+
+            # INFO_REQUEST
+            _LOGGER.debug("__init__.py.async_set_mode(): REQUEST=%s", CONST.SET_ALARM_REQUEST)
+            tasks.append(asyncio.ensure_future(LupusecAPI._async_api_post(self._ip_address, client, 
+                CONST.SET_ALARM_REQUEST, params)))
+
+            # Print response list
+            _LOGGER.debug("await asyncio.gather(*tasks)...")
+            response_list = await asyncio.gather(*tasks)
+            _LOGGER.debug("done. check content in response_list...")
+            for content in response_list:
+                print(content)              
+        _LOGGER.debug("__init__.py.async_set_mode() finished.")
 
 
     def get_power_switches(self):
@@ -399,18 +465,6 @@ class LupusecAPI:
             refresh = False
 
         return self.get_device(CONST.ALARM_DEVICE_ID, refresh)
-
-
-    def set_mode(self, mode):
-        if self.model == 1:
-            params = {
-                "mode": mode,
-            }
-        elif self.model == 2:
-            params = {"mode": mode, "area": 1}
-        r = self._request_post("panelCondPost", params)
-        responseJson = self.clean_json(r.text)
-        return responseJson
 
 
     def clean_json(textdata):
