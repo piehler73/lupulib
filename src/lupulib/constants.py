@@ -4,7 +4,7 @@
 # -*- coding: utf-8 -*-
 
 # Project Information
-VERSION = "0.3.34"
+VERSION = "0.3.35"
 PROJECT_PACKAGE_NAME = "lupulib"
 PROJECT_LICENSE = "MIT"
 PROJECT_URL = "http://www.github.com/majuss/lupulib"
@@ -20,7 +20,7 @@ PROJECT_AUTHOR = "piehler73"
 
 
 # Lupusec API Calls: Requests and Headers
-URL_HTTP = "http://"
+URL_HTTP = "https://"
 URL_ACTION = "/action/"
 UPDATE_FREQ = 2
 

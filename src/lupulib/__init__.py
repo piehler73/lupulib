@@ -156,7 +156,7 @@ class LupusecAPI:
         _LOGGER.debug(f"Starttime: {start_time}")
 
         try:
-            async with client.post(url), params as resp:
+            async with client.post(url, params) as resp:
                 _LOGGER.debug("Response_Status=%s", resp.status)
                 _LOGGER.debug("Content_Type=%s", resp.headers["content-type"])
 
@@ -226,7 +226,7 @@ class LupusecAPI:
     async def async_set_mode(self, mode) -> None:
         """Async method to set alarm mode."""
         _LOGGER.debug("__init__.py.async_set_mode() called: ")
-        _LOGGER.info("...mode: ", mode)
+        _LOGGER.info("...mode: ", str(mode))
 
         params = {"mode": mode, "area": 1}
 
