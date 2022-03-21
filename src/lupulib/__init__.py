@@ -152,6 +152,7 @@ class LupusecAPI:
         # Generate complete URL from Constants.py
         url = f'{CONST.URL_HTTP}{ip}{CONST.URL_ACTION}{action_url}'
         _LOGGER.debug("_async_api_post() called: URL=%s", url)
+        print("_type of params", type(params))
         start_time = time.time()
         _LOGGER.debug(f"Starttime: {start_time}")
 
