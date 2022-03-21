@@ -68,6 +68,7 @@ class LupusecAPI:
         self._auth = None
         if self._username != None and self._password != None:
             self._auth = aiohttp.BasicAuth(login=self._username, password=self._password, encoding='utf-8')
+            _LOGGER.debug("...set aiohttp.BasicAuth")
         self._system = None
 
         # Try to access local cache file
@@ -152,21 +153,19 @@ class LupusecAPI:
         # Generate complete URL from Constants.py
         url = f'{CONST.URL_HTTP}{ip}{CONST.URL_ACTION}{action_url}'
         _LOGGER.debug("_async_api_post() called: URL=%s", url)
-        print("_type of params", type(params))
         start_time = time.time()
         _LOGGER.debug(f"Starttime: {start_time}")
 
         try:
             async with client.post(url, data=params, ssl=False) as resp:
-                _LOGGER.debug("Response_Status=%s", resp.status)
-                _LOGGER.debug("Content_Type=%s", resp.headers["content-type"])
-
                 # check for Response Status other than 200
+                _LOGGER.debug("Response_Status=%s", resp.status)
                 if resp.status != 200:
                     _LOGGER.error(f"ERROR: Response status = {resp.status}")
                     return {}
 
                 # check for non-JSON Response Headers   
+                _LOGGER.debug("Content_Type=%s", resp.headers["content-type"])              
                 if not resp.headers["content-type"].strip().startswith("application/json"):
                     _LOGGER.error(f"ERROR: Content Type is not JSON = {resp.headers['content-type']}")
                     return {}
@@ -227,7 +226,8 @@ class LupusecAPI:
     async def async_set_mode(self, mode) -> None:
         """Async method to set alarm mode."""
         _LOGGER.debug("__init__.py.async_set_mode() called: ")
-        _LOGGER.info("...mode: ", str(mode))
+        print("_type of params", type(mode))
+        _LOGGER.info("...mode: %s", mode)
 
         params = {"mode": mode, "area": 1}
 
