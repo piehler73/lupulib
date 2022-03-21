@@ -157,7 +157,7 @@ class LupusecAPI:
         _LOGGER.debug(f"Starttime: {start_time}")
 
         try:
-            async with client.post(url, data=params) as resp:
+            async with client.post(url, data=params, ssl=False) as resp:
                 _LOGGER.debug("Response_Status=%s", resp.status)
                 _LOGGER.debug("Content_Type=%s", resp.headers["content-type"])
 
