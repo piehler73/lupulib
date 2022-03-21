@@ -168,10 +168,11 @@ class LupusecAPI:
                 _LOGGER.debug("Content_Type=%s", resp.headers["content-type"])              
                 if not resp.headers["content-type"].strip().startswith("application/json"):
                     _LOGGER.error(f"ERROR: Content Type is not JSON = {resp.headers['content-type']}")
+                    content = await resp.text()
+                    print(content)
                     return {}
 
                 # Get Response Body
-                # content = await resp.json()
                 content = await resp.text()
 
                 # ToDo: check for empty body, size = 0
@@ -226,8 +227,7 @@ class LupusecAPI:
     async def async_set_mode(self, mode) -> None:
         """Async method to set alarm mode."""
         _LOGGER.debug("__init__.py.async_set_mode() called: ")
-        print("_type of params", type(mode))
-        _LOGGER.info("...mode: %s", mode)
+        _LOGGER.info("...set mode: %s", mode)
 
         params = {"mode": mode, "area": 1}
 
