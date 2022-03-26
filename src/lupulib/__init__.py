@@ -151,16 +151,18 @@ class LupusecAPI:
             return {}
 
 
-    async def _async_api_post(ip, session, action_url, params) -> Dict:
+    async def _async_api_post(ip, session, action_url, headers, params) -> Dict:
         """Generic sync method to call the Lupusec API"""
         # Generate complete URL from Constants.py
         url = f'{CONST.URL_HTTP}{ip}{CONST.URL_PORT}{CONST.URL_ACTION}{action_url}'
         _LOGGER.debug("_async_api_post() called: URL=%s", url)
         start_time = time.time()
         _LOGGER.debug(f"Starttime: {start_time}")
+        if (headers == None):
+            headers = {}
 
         try:
-            async with session.post(url, data=params, ssl=False) as resp:
+            async with session.post(url, headers=headers, data=params, ssl=False) as resp:
                 # check for Response Status other than 200
                 _LOGGER.debug("Response_Status=%s", resp.status)
                 if resp.status != 200:
@@ -283,6 +285,44 @@ class LupusecAPI:
                 _LOGGER.debug("ERROR: no session Token available.")
             
         _LOGGER.debug("__init__.py.async_set_mode() finished.")
+
+
+    async def async_set_switch(self, switch, mode) -> None:
+        """Async method to set switches."""
+        _LOGGER.debug("__init__.py.async_set_switch() called: ")
+        _LOGGER.info("...for switch: %s, set mode: %s", switch, mode)
+        execution = "a=1&z=" + str(switch) + "&sw=" + "&pd=")
+        # example: exec: a=1&z=20&sw=on&pd=
+        _LOGGER.debug("{ exec: %s}", execution)        
+        params = {"exec": execution}
+
+         # Control Switch
+        async with aiohttp.ClientSession(auth=self._auth) as session:
+            _LOGGER.debug("auth.encode: %s", self._auth.encode())            
+            tasks = []
+
+            # Get Session Token
+            _LOGGER.debug("__init__.py.async_set_switch(): REQUEST=%s", CONST.TOKEN_REQUEST)
+            token_response = await LupusecAPI.async_get_token(self, session)
+            _LOGGER.debug("async_get_token(): done. check response...")
+            print(token_response)
+            if (token_response != 0):
+                _LOGGER.debug("Token: %s", self._token)
+                headers = {"X-Token": self._token}
+
+                # SET_SWITCH
+                _LOGGER.debug("__init__.py.async_set_switch(): REQUEST=%s", CONST.EXECUTE_REQUEST)
+                # Print response list
+                _LOGGER.debug("await asyncio.gather(*tasks)...")
+                set_switch_response = await LupusecAPI._async_api_post(self._ip_address, session, 
+                    CONST.EXECUTE_REQUEST, headers, params)
+                _LOGGER.debug("_async_api_post(): done. check response...")
+                for content in set_switch_response:
+                    print(content)  
+            else :    
+                _LOGGER.debug("ERROR: no session Token available.")
+            
+        _LOGGER.debug("__init__.py.set_switch_response() finished.")
 
 
     def get_power_switches(self):
