@@ -199,30 +199,28 @@ class LupusecAPI:
 
 
 
-    async def async_get_token(self, client) -> int:
+    async def async_get_token(self, session) -> int:
         """Async method to get the a session token from Lupusec System."""
         _LOGGER.debug("__init__.py.async_get_token() called: ")
 
          # Get Session Token
-        async with LupusecAPI._async_api_call(self._ip_address, client, CONST.TOKEN_REQUEST) as response:
-            # Print response list
-            _LOGGER.debug("await response...")
-            response_list = await response
-            _LOGGER.debug("done. check content in response_list...")
-            for content in response_list:
-                print(content)
-                _LOGGER.debug("response.getsizeof(): %s", sys.getsizeof(content)) 
-                if (sys.getsizeof(content) > 0):
-                    _LOGGER.debug("RESULT_RESPONSE: %s", content[CONST.RESPONSE_RESULT]) 
-                    if (content[CONST.RESPONSE_RESULT] == 1):
-                        _LOGGER.debug("RESPONSE_MESSAGE: %s", content[CONST.RESPONSE_MESSAGE]) 
-                        if (len(content[CONST.RESPONSE_MESSAGE]) != 0):
-                            self._token = content[CONST.RESPONSE_MESSAGE]
-                            _LOGGER.debug("Token: %s", self._token)    
-                            return content[CONST.RESPONSE_RESULT]
-                    return 0
-                return 0
-        _LOGGER.debug("__init__.py.async_get_token() finished.")  
+        _LOGGER.debug("await response...")
+        token_response =  await LupusecAPI._async_api_call(self._ip_address, session, CONST.TOKEN_REQUEST)
+        _LOGGER.debug("done. check content in response_list...")
+        _LOGGER.debug("response.getsizeof(): %s", sys.getsizeof(token_response)) 
+        print(token_response)
+        if (sys.getsizeof(token_response) > 0):
+            _LOGGER.debug("RESULT_RESPONSE: %s", token_response[CONST.RESPONSE_RESULT]) 
+            if (token_response[CONST.RESPONSE_RESULT] == 1):
+                _LOGGER.debug("RESPONSE_MESSAGE: %s", token_response[CONST.RESPONSE_MESSAGE]) 
+                if (len(token_response[CONST.RESPONSE_MESSAGE]) != 0):
+                    self._token = token_response[CONST.RESPONSE_MESSAGE]
+                    _LOGGER.debug("Token: %s", self._token) 
+                    _LOGGER.debug("__init__.py.async_get_token() finished.")    
+                    return token_response[CONST.RESPONSE_RESULT]
+            return 0
+        return 0
+ 
 
     async def async_get_system(self) -> None:
         """Async method to get the system info."""
@@ -261,34 +259,29 @@ class LupusecAPI:
         params = {"mode": mode, "area": 1}
 
          # Set Alarm Mode
-        async with aiohttp.ClientSession(auth=self._auth) as client:
+        async with aiohttp.ClientSession(auth=self._auth) as session:
             _LOGGER.debug("auth.encode: %s", self._auth.encode())            
             tasks = []
 
             # Get Session Token
             _LOGGER.debug("__init__.py.async_set_mode(): REQUEST=%s", CONST.TOKEN_REQUEST)
-            tasks.append(asyncio.ensure_future(LupusecAPI.async_get_token(self, client)))
-            _LOGGER.debug("await asyncio.gather(*tasks)...")
-            response_list = await asyncio.gather(*tasks)
-            _LOGGER.debug("done. check content in response_list...")
-            for content in response_list:
-                print(content)
-                if (content != 0):
-                    _LOGGER.debug("Token: %s", self._token)
-                    # SET_ALARM_REQUEST
-                    _LOGGER.debug("__init__.py.async_set_mode(): REQUEST=%s", CONST.SET_ALARM_REQUEST)
-                    tasks.append(asyncio.ensure_future(LupusecAPI._async_api_post(self._ip_address, client, 
-                        CONST.SET_ALARM_REQUEST, params)))
-
-                    # Print response list
-                    _LOGGER.debug("await asyncio.gather(*tasks)...")
-                    response_list = await asyncio.gather(*tasks)
-                    _LOGGER.debug("done. check content in response_list...")
-                    for content in response_list:
-                        print(content)  
-
-                else :    
-                    _LOGGER.debug("ERROR: no session Token available.")
+            #tasks.append(asyncio.ensure_future(LupusecAPI.async_get_token(self, client)))
+            token_response = await LupusecAPI.async_get_token(self, session)
+            _LOGGER.debug("async_get_token(): done. check response...")
+            print(token_response)
+            if (token_response != 0):
+                _LOGGER.debug("Token: %s", self._token)
+                # SET_ALARM_REQUEST
+                _LOGGER.debug("__init__.py.async_set_mode(): REQUEST=%s", CONST.SET_ALARM_REQUEST)
+                # Print response list
+                _LOGGER.debug("await asyncio.gather(*tasks)...")
+                set_alarm_response = await LupusecAPI._async_api_post(self._ip_address, client, 
+                    CONST.SET_ALARM_REQUEST, params))
+                _LOGGER.debug("_async_api_post(): done. check response...")
+                for content in set_alarm_response:
+                    print(content)  
+            else :    
+                _LOGGER.debug("ERROR: no session Token available.")
             
         _LOGGER.debug("__init__.py.async_set_mode() finished.")
 
