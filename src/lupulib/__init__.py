@@ -291,8 +291,9 @@ class LupusecAPI:
                     _LOGGER.debug("done. check content in response_list...")
                     for content in response_list:
                         print(content)  
-                        else:
-                            _LOGGER.debug("ERROR: no session Token available.")
+                        
+                else :    
+                    _LOGGER.debug("ERROR: no session Token available.")
             
         _LOGGER.debug("__init__.py.async_set_mode() finished.")
 
