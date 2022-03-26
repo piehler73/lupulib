@@ -68,6 +68,7 @@ class LupusecAPI:
         self._auth = None
         if self._username != None and self._password != None:
             self._auth = aiohttp.BasicAuth(login=self._username, password=self._password, encoding='utf-8')
+            _LOGGER.debug("...auth.encode: %s", self._auth.decode())  
             _LOGGER.debug("...set aiohttp.BasicAuth")
         self._system = None
         self._token = None
