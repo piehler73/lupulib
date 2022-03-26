@@ -276,7 +276,7 @@ class LupusecAPI:
                 # Print response list
                 _LOGGER.debug("await asyncio.gather(*tasks)...")
                 set_alarm_response = await LupusecAPI._async_api_post(self._ip_address, client, 
-                    CONST.SET_ALARM_REQUEST, params))
+                    CONST.SET_ALARM_REQUEST, params)
                 _LOGGER.debug("_async_api_post(): done. check response...")
                 for content in set_alarm_response:
                     print(content)  

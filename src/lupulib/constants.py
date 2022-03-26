@@ -4,7 +4,7 @@
 # -*- coding: utf-8 -*-
 
 # Project Information
-VERSION = "0.3.52"
+VERSION = "0.3.53"
 PROJECT_PACKAGE_NAME = "lupulib"
 PROJECT_LICENSE = "MIT"
 PROJECT_URL = "http://www.github.com/majuss/lupulib"
