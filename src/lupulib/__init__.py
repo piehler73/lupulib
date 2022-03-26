@@ -219,15 +219,14 @@ class LupusecAPI:
                 _LOGGER.debug("response.getsizeof(): %s", sys.getsizeof(content)) 
                 if (sys.getsizeof(content) > 0):
                     _LOGGER.debug("RESULT_RESPONSE: %s", content[CONST.RESPONSE_RESULT]) 
-                    if (content[CONST.RESPONSE_RESULT] == 1)
+                    if (content[CONST.RESPONSE_RESULT] == 1):
                         _LOGGER.debug("RESPONSE_MESSAGE: %s", content[CONST.RESPONSE_MESSAGE]) 
-                        if (len(content[CONST.RESPONSE_MESSAGE]) != 0)
+                        if (len(content[CONST.RESPONSE_MESSAGE]) != 0):
                             self._token = content[CONST.RESPONSE_MESSAGE]
                             _LOGGER.debug("Token: %s", self._token)    
                             return content[CONST.RESPONSE_RESULT]
                     return 0
                 return 0
-            return 0
         _LOGGER.debug("__init__.py.async_get_token() finished.")  
 
     async def async_get_system(self) -> None:
