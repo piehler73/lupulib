@@ -198,7 +198,7 @@ class LupusecAPI:
 
 
 
-    async def async_get_token(self) -> int:
+    async def async_get_token(self, client) -> int:
         """Async method to get the a session token from Lupusec System."""
         _LOGGER.debug("__init__.py.async_get_token() called: ")
 
@@ -272,7 +272,7 @@ class LupusecAPI:
 
             # Get Session Token
             _LOGGER.debug("__init__.py.async_set_mode(): REQUEST=%s", CONST.TOKEN_REQUEST)
-            tasks.append(asyncio.ensure_future(LupusecAPI.async_get_token()))
+            tasks.append(asyncio.ensure_future(LupusecAPI.async_get_token(client)))
             _LOGGER.debug("await asyncio.gather(*tasks)...")
             response_list = await asyncio.gather(*tasks)
             _LOGGER.debug("done. check content in response_list...")
@@ -291,7 +291,7 @@ class LupusecAPI:
                     _LOGGER.debug("done. check content in response_list...")
                     for content in response_list:
                         print(content)  
-                        
+
                 else :    
                     _LOGGER.debug("ERROR: no session Token available.")
             
