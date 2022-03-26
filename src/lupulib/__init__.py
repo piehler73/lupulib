@@ -291,7 +291,7 @@ class LupusecAPI:
         """Async method to set switches."""
         _LOGGER.debug("__init__.py.async_set_switch() called: ")
         _LOGGER.info("...for switch: %s, set mode: %s", switch, mode)
-        execution = "a=1&z=" + str(switch) + "&sw=" + "&pd=")
+        execution = "a=1&z=" + str(switch) + "&sw=" + mode + "&pd=")
         # example: exec: a=1&z=20&sw=on&pd=
         _LOGGER.debug("{ exec: %s}", execution)        
         params = {"exec": execution}

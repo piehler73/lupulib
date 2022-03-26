@@ -116,6 +116,11 @@ def get_arguments():
         help='Output only warnings and errors',
         required=False, default=False, action="store_true")
 
+    parser.add_argument(
+        '--switch',
+        help='switch',
+        required=False, default=False, action="store_true")
+
     return parser.parse_args()
 
 def call():
@@ -163,6 +168,16 @@ def call():
                 _LOGGER.info('Alarm mode changed to disarmed')
             else:
                 _LOGGER.warning('Failed to change alarm mode to disarmed')
+
+        if args.switch:
+            #if lupusec.get_alarm().set_away():
+            #    _LOGGER.info('Alarm mode changed to armed')
+            #else:
+            #    _LOGGER.warning('Failed to change alarm mode to armed')
+            _LOGGER.debug('__main.py__.call().async_set_switch()...')
+            asyncio.run(lupusec.async_set_switch(20,"on"))
+            _LOGGER.info('__main.py__.call().async_set_switch()...finished.')
+
 
         if args.home:
             if lupusec.get_alarm().set_home():
