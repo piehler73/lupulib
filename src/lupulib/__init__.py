@@ -219,9 +219,9 @@ class LupusecAPI:
                 _LOGGER.debug("response.getsizeof(): %s", sys.getsizeof(content)) 
                 if (sys.getsizeof(content) > 0):
                     _LOGGER.debug("RESULT_RESPONSE: %s", content[CONST.RESPONSE_RESULT]) 
-                    if (content[CONST.RESPONSE_RESULT] = 1)
+                    if (content[CONST.RESPONSE_RESULT] == 1)
                         _LOGGER.debug("RESPONSE_MESSAGE: %s", content[CONST.RESPONSE_MESSAGE]) 
-                        if (content[CONST.RESPONSE_MESSAGE] <> "")
+                        if (len(content[CONST.RESPONSE_MESSAGE]) != 0)
                             self._token = content[CONST.RESPONSE_MESSAGE]
                             _LOGGER.debug("Token: %s", self._token)    
                             return content[CONST.RESPONSE_RESULT]
@@ -279,7 +279,7 @@ class LupusecAPI:
             _LOGGER.debug("done. check content in response_list...")
             for content in response_list:
                 print(content)
-                if (content <> 0):
+                if (content != 0):
                     _LOGGER.debug("Token: %s", self._token)
                     # SET_ALARM_REQUEST
                     _LOGGER.debug("__init__.py.async_set_mode(): REQUEST=%s", CONST.SET_ALARM_REQUEST)
