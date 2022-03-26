@@ -204,16 +204,10 @@ class LupusecAPI:
         _LOGGER.debug("__init__.py.async_get_token() called: ")
 
          # Get Session Token
-        async with aiohttp.ClientSession(auth=self._auth) as client:
-            tasks = []
-
-            # INFO_REQUEST
-            _LOGGER.debug("__init__.py.async_get_system(): REQUEST=%s", CONST.TOKEN_REQUEST)
-            tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(self._ip_address, client, CONST.TOKEN_REQUEST)))
-
+        async with LupusecAPI._async_api_call(self._ip_address, client, CONST.TOKEN_REQUEST)) as response:
             # Print response list
-            _LOGGER.debug("await asyncio.gather(*tasks)...")
-            response_list = await asyncio.gather(*tasks)
+            _LOGGER.debug("await response...")
+            response_list = await response
             _LOGGER.debug("done. check content in response_list...")
             for content in response_list:
                 print(content)
