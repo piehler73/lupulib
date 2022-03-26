@@ -104,7 +104,7 @@ class LupusecAPI:
 
 
     # ToDo: should renamed to: _async_api_get()
-    async def _async_api_call(ip, client, action_url) -> Dict:
+    async def _async_api_call(ip, session, action_url) -> Dict:
         """Generic sync method to call the Lupusec API"""
         # Generate complete URL from Constants.py
         url = f'{CONST.URL_HTTP}{ip}{CONST.URL_PORT}{CONST.URL_ACTION}{action_url}'
@@ -113,7 +113,7 @@ class LupusecAPI:
         _LOGGER.debug(f"Starttime: {start_time}")
 
         try:
-            async with client.get(url) as resp:
+            async with session.get(url, ssl=False) as resp:
                 _LOGGER.debug("Response_Status=%s", resp.status)
                 _LOGGER.debug("Content_Type=%s", resp.headers["content-type"])
 
@@ -151,7 +151,7 @@ class LupusecAPI:
             return {}
 
 
-    async def _async_api_post(ip, client, action_url, params) -> Dict:
+    async def _async_api_post(ip, session, action_url, params) -> Dict:
         """Generic sync method to call the Lupusec API"""
         # Generate complete URL from Constants.py
         url = f'{CONST.URL_HTTP}{ip}{CONST.URL_PORT}{CONST.URL_ACTION}{action_url}'
@@ -160,7 +160,7 @@ class LupusecAPI:
         _LOGGER.debug(f"Starttime: {start_time}")
 
         try:
-            async with client.post(url, data=params, ssl=False) as resp:
+            async with session.post(url, data=params, ssl=False) as resp:
                 # check for Response Status other than 200
                 _LOGGER.debug("Response_Status=%s", resp.status)
                 if resp.status != 200:
@@ -227,12 +227,12 @@ class LupusecAPI:
         _LOGGER.debug("__init__.py.async_get_system() called: ")
 
          # Get System Info
-        async with aiohttp.ClientSession(auth=self._auth) as client:
+        async with aiohttp.ClientSession(auth=self._auth) as session:
             tasks = []
 
             # INFO_REQUEST
             _LOGGER.debug("__init__.py.async_get_system(): REQUEST=%s", CONST.INFO_REQUEST)
-            tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(self._ip_address, client, CONST.INFO_REQUEST)))
+            tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(self._ip_address, session, CONST.INFO_REQUEST)))
 
             # Print response list
             _LOGGER.debug("await asyncio.gather(*tasks)...")
@@ -265,7 +265,6 @@ class LupusecAPI:
 
             # Get Session Token
             _LOGGER.debug("__init__.py.async_set_mode(): REQUEST=%s", CONST.TOKEN_REQUEST)
-            #tasks.append(asyncio.ensure_future(LupusecAPI.async_get_token(self, client)))
             token_response = await LupusecAPI.async_get_token(self, session)
             _LOGGER.debug("async_get_token(): done. check response...")
             print(token_response)
@@ -275,7 +274,7 @@ class LupusecAPI:
                 _LOGGER.debug("__init__.py.async_set_mode(): REQUEST=%s", CONST.SET_ALARM_REQUEST)
                 # Print response list
                 _LOGGER.debug("await asyncio.gather(*tasks)...")
-                set_alarm_response = await LupusecAPI._async_api_post(self._ip_address, client, 
+                set_alarm_response = await LupusecAPI._async_api_post(self._ip_address, session, 
                     CONST.SET_ALARM_REQUEST, params)
                 _LOGGER.debug("_async_api_post(): done. check response...")
                 for content in set_alarm_response:
@@ -339,12 +338,12 @@ class LupusecAPI:
         """Async method to get the device list from Lupusec System."""
         _LOGGER.debug("__init__.py.async_get_devices() called: ")
         # Get System Info
-        async with aiohttp.ClientSession(auth=self._auth) as client:
+        async with aiohttp.ClientSession(auth=self._auth) as session:
             tasks = []
 
             # Device List REQUEST
             _LOGGER.debug("__init__.py.async_get_devices(): REQUEST=%s", CONST.DEVICE_LIST_REQUEST)
-            tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(self._ip_address, client, CONST.DEVICE_LIST_REQUEST)))
+            tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(self._ip_address, session, CONST.DEVICE_LIST_REQUEST)))
 
             # Print response list
             _LOGGER.debug("await asyncio.gather(*tasks)...")
