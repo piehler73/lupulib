@@ -70,6 +70,7 @@ class LupusecAPI:
             self._auth = aiohttp.BasicAuth(login=self._username, password=self._password, encoding='utf-8')
             _LOGGER.debug("...set aiohttp.BasicAuth")
         self._system = None
+        self._token = None
 
         # Try to access local cache file
         _LOGGER.debug(f"Check for Cache-File: {home}/{CONST.HISTORY_CACHE_NAME}")
@@ -101,6 +102,7 @@ class LupusecAPI:
         self._apiDevices = None
 
 
+    # ToDo: should renamed to: _async_api_get()
     async def _async_api_call(ip, client, action_url) -> Dict:
         """Generic sync method to call the Lupusec API"""
         # Generate complete URL from Constants.py
@@ -195,6 +197,39 @@ class LupusecAPI:
             return {}
 
 
+
+    async def async_get_token(self) -> int:
+        """Async method to get the a session token from Lupusec System."""
+        _LOGGER.debug("__init__.py.async_get_token() called: ")
+
+         # Get Session Token
+        async with aiohttp.ClientSession(auth=self._auth) as client:
+            tasks = []
+
+            # INFO_REQUEST
+            _LOGGER.debug("__init__.py.async_get_system(): REQUEST=%s", CONST.TOKEN_REQUEST)
+            tasks.append(asyncio.ensure_future(LupusecAPI._async_api_call(self._ip_address, client, CONST.TOKEN_REQUEST)))
+
+            # Print response list
+            _LOGGER.debug("await asyncio.gather(*tasks)...")
+            response_list = await asyncio.gather(*tasks)
+            _LOGGER.debug("done. check content in response_list...")
+            for content in response_list:
+                print(content)
+                _LOGGER.debug("response.getsizeof(): %s", sys.getsizeof(content)) 
+                if (sys.getsizeof(content) > 0):
+                    _LOGGER.debug("RESULT_RESPONSE: %s", content[CONST.RESPONSE_RESULT]) 
+                    if (content[CONST.RESPONSE_RESULT] = 1)
+                        _LOGGER.debug("RESPONSE_MESSAGE: %s", content[CONST.RESPONSE_MESSAGE]) 
+                        if (content[CONST.RESPONSE_MESSAGE] <> "")
+                            self._token = content[CONST.RESPONSE_MESSAGE]
+                            _LOGGER.debug("Token: %s", self._token)    
+                            return content[CONST.RESPONSE_RESULT]
+                    return 0
+                return 0
+            return 0
+        _LOGGER.debug("__init__.py.async_get_token() finished.")  
+
     async def async_get_system(self) -> None:
         """Async method to get the system info."""
         _LOGGER.debug("__init__.py.async_get_system() called: ")
@@ -233,19 +268,33 @@ class LupusecAPI:
 
          # Set Alarm Mode
         async with aiohttp.ClientSession(auth=self._auth) as client:
+            _LOGGER.debug("auth.encode: %s", self._auth.decode())            
             tasks = []
 
-            # INFO_REQUEST
-            _LOGGER.debug("__init__.py.async_set_mode(): REQUEST=%s", CONST.SET_ALARM_REQUEST)
-            tasks.append(asyncio.ensure_future(LupusecAPI._async_api_post(self._ip_address, client, 
-                CONST.SET_ALARM_REQUEST, params)))
-
-            # Print response list
+            # Get Session Token
+            _LOGGER.debug("__init__.py.async_set_mode(): REQUEST=%s", CONST.TOKEN_REQUEST)
+            tasks.append(asyncio.ensure_future(LupusecAPI.async_get_token()))
             _LOGGER.debug("await asyncio.gather(*tasks)...")
             response_list = await asyncio.gather(*tasks)
             _LOGGER.debug("done. check content in response_list...")
             for content in response_list:
-                print(content)              
+                print(content)
+                if (content <> 0):
+                    _LOGGER.debug("Token: %s", self._token)
+                    # SET_ALARM_REQUEST
+                    _LOGGER.debug("__init__.py.async_set_mode(): REQUEST=%s", CONST.SET_ALARM_REQUEST)
+                    tasks.append(asyncio.ensure_future(LupusecAPI._async_api_post(self._ip_address, client, 
+                        CONST.SET_ALARM_REQUEST, params)))
+
+                    # Print response list
+                    _LOGGER.debug("await asyncio.gather(*tasks)...")
+                    response_list = await asyncio.gather(*tasks)
+                    _LOGGER.debug("done. check content in response_list...")
+                    for content in response_list:
+                        print(content)  
+                        else
+                            _LOGGER.debug("ERROR: no session Token available.")
+            
         _LOGGER.debug("__init__.py.async_set_mode() finished.")
 
 
