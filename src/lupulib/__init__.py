@@ -204,7 +204,7 @@ class LupusecAPI:
         _LOGGER.debug("__init__.py.async_get_token() called: ")
 
          # Get Session Token
-        async with LupusecAPI._async_api_call(self._ip_address, client, CONST.TOKEN_REQUEST)) as response:
+        async with LupusecAPI._async_api_call(self._ip_address, client, CONST.TOKEN_REQUEST) as response:
             # Print response list
             _LOGGER.debug("await response...")
             response_list = await response
