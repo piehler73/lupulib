@@ -377,7 +377,13 @@ class LupusecAPI:
                 else :
                     _LOGGER.info("ERROR: get_switches(): no switches found.")
 
-        _LOGGER.debug("__init__.py.get_switches() finished.")            
+        _LOGGER.debug("__init__.py.get_switches() finished.") 
+
+        if (len(self._cacheSwitches) != 0):
+            print("Number of switches=", len(self._cacheSwitches))            
+            for switch in self._cacheSwitches:
+                print("sid: ", switch["sid"], ", name: ", switch["name"], 
+                        ", type: ", switch["type"], ", status: ", switch["status"])
         return self._cacheSwitches
 
 
