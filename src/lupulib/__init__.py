@@ -306,7 +306,6 @@ class LupusecAPI:
          # Control Switch
         async with aiohttp.ClientSession(auth=self._auth) as session:
             _LOGGER.debug("auth.encode: %s", self._auth.encode())            
-            tasks = []
 
             # Get Session Token
             _LOGGER.debug("__init__.py.async_set_switch(): REQUEST=%s", CONST.TOKEN_REQUEST)
@@ -339,30 +338,48 @@ class LupusecAPI:
         _LOGGER.debug("__init__.py.async_set_switch() finished.")
 
 
-    def get_power_switches(self):
-        _LOGGER.debug("get_power_switches() called:")
-        stampNow = time.time()
+    async def get_switches(self) -> Dict:
+        """Async method to get switches."""
+        _LOGGER.debug("__init__.py.get_switches() called: ")
+        timeNow = time.time()
         length = len(self._devices)
-        if self._cachePss is None or stampNow - self._cacheStampP > 2.0:
-            self._cacheStamp_p = stampNow
-            response = self._request_get("pssStatusGet")
-            response = self.clean_json(response.text)["forms"]
-            powerSwitches = []
-            counter = 1
-            for pss in response:
-                powerSwitch = {}
-                if response[pss]["ready"] == 1:
-                    powerSwitch["status"] = response[pss]["pssonoff"]
-                    powerSwitch["device_id"] = counter + length
-                    powerSwitch["type"] = CONST.TYPE_POWER_SWITCH
-                    powerSwitch["name"] = response[pss]["name"]
-                    powerSwitches.append(powerSwitch)
-                else:
-                    _LOGGER.debug("Pss skipped, not active")
-                counter += 1
-            self._cachePss = powerSwitches
+        
+        # Get switches from cache or update from Lupusec System
+        # ToDo: update frequency shall not be hard-coded -> transfer to constant
+        if self._cacheSwitches is None or timeNow - self._cacheStampP > 2.0:
+            _LOGGER.debug("...switches need update from Lupusec System.")
+            self._cacheStamp_p = timeNow
 
-        return self._cachePss
+            async with aiohttp.ClientSession(auth=self._auth) as session:
+                _LOGGER.debug("auth.encode: %s", self._auth.encode())  
+
+                # Get all devices and filter for switches
+                _LOGGER.debug("__init__.py.async_get_devices(): REQUEST=%s", CONST.DEVICE_LIST_REQUEST)
+                get_switches_response = await LupusecAPI._async_api_call(self._ip_address, session, CONST.DEVICE_LIST_REQUEST)
+                _LOGGER.debug("_async_api_call(): done. check response...")
+                for content in get_switches_response:
+                    # Retreive Device Liste from Response
+                    if CONST.DEVICE_LIST_HEADER in content:
+                        device_content = content[CONST.DEVICE_LIST_HEADER]
+                        print("Number of devices=", len(device_content))    
+                        if (len(device_content) != 0)                
+                            switches = []
+                            for device in device_content:
+                                print("sid: ", device["sid"], ", name: ", device["name"], 
+                                    ", type: ", device["type"], ", status: ", device["status"])
+                                if (type_tag in CONST.TYPES_SWITCH):    
+                                    switches.append(device)
+                                    _LOGGER.debug("device is switch...added.")
+                                else :
+                                    _LOGGER.debug("device is no switch...skipping.")
+                            self._cacheSwitches = switches
+                        else : 
+                            _LOGGER.info("ERROR: get_switches(): no switches found.")
+                    else :
+                        _LOGGER.info("ERROR: get_switches(): no switches found.")
+
+        _LOGGER.debug("__init__.py.get_switches() finished.")            
+        return self._cacheSwitches
 
 
     def get_sensors(self):
@@ -428,7 +445,6 @@ class LupusecAPI:
 
         _LOGGER.debug("__init__.py.async_get_devices() finished.")            
         return self._apiDevices
-
 
 
     def get_panel(self):

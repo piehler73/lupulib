@@ -117,9 +117,15 @@ def get_arguments():
         required=False, default=False, action="store_true")
 
     parser.add_argument(
-        '--switch',
-        help='switch',
+        '--setswitch',
+        help='set switch',
         required=False, default=False, action="store_true")
+
+    parser.add_argument(
+        '--switches',
+        help='get all switches',
+        required=False, default=False, action="store_true")
+
 
     return parser.parse_args()
 
@@ -169,7 +175,12 @@ def call():
             else:
                 _LOGGER.warning('Failed to change alarm mode to disarmed')
 
-        if args.switch:
+        if args.switches:
+            _LOGGER.debug('__main.py__.call().get_switch()...')
+            asyncio.run(lupusec.get_switches())
+            _LOGGER.info('__main.py__.call().get_switch()...finished.')
+
+        if args.setswitch:
             #if lupusec.get_alarm().set_away():
             #    _LOGGER.info('Alarm mode changed to armed')
             #else:
@@ -177,7 +188,6 @@ def call():
             _LOGGER.debug('__main.py__.call().async_set_switch()...')
             asyncio.run(lupusec.async_set_switch(20,"on"))
             _LOGGER.info('__main.py__.call().async_set_switch()...finished.')
-
 
         if args.home:
             if lupusec.get_alarm().set_home():
