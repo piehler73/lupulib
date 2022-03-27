@@ -342,7 +342,6 @@ class LupusecAPI:
         """Async method to get switches."""
         _LOGGER.debug("__init__.py.get_switches() called: ")
         timeNow = time.time()
-        length = len(self._devices)
         
         # Get switches from cache or update from Lupusec System
         # ToDo: update frequency shall not be hard-coded -> transfer to constant
