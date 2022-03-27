@@ -140,7 +140,7 @@ class LupusecAPI:
                 _LOGGER.debug(f"Endtime: {end_time}")   
                 _LOGGER.debug(f"Duration: {end_time - start_time} seconds") 
                 _LOGGER.debug("API-Call finished.")  
-                print(clean_content)            
+                #print(clean_content)            
                 return clean_content
 
         except aiohttp.client_exceptions.ClientConnectorError:
@@ -366,7 +366,7 @@ class LupusecAPI:
                         for device in device_content:
                             print("sid: ", device["sid"], ", name: ", device["name"], 
                                 ", type: ", device["type"], ", status: ", device["status"])
-                            if (type_tag in CONST.TYPES_SWITCH):    
+                            if (device["type"] in CONST.TYPES_SWITCH):    
                                 switches.append(device)
                                 _LOGGER.debug("device is switch...added.")
                             else :
