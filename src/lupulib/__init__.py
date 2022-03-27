@@ -362,7 +362,7 @@ class LupusecAPI:
                     if CONST.DEVICE_LIST_HEADER in content:
                         device_content = content[CONST.DEVICE_LIST_HEADER]
                         print("Number of devices=", len(device_content))    
-                        if (len(device_content) != 0)                
+                        if (len(device_content) != 0):             
                             switches = []
                             for device in device_content:
                                 print("sid: ", device["sid"], ", name: ", device["name"], 
