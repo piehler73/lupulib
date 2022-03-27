@@ -160,6 +160,11 @@ class LupusecAPI:
         _LOGGER.debug(f"Starttime: {start_time}")
         if (headers == None):
             headers = {}
+        print("_async_api_post() called...")
+        print("headers:")
+        print(headers)
+        print("params:")
+        print(params)
 
         try:
             async with session.post(url, headers=headers, data=params, ssl=False) as resp:
@@ -183,6 +188,7 @@ class LupusecAPI:
                 # ToDo: check for empty body, size = 0
                 content = content.replace(chr(245), "")
                 content = content.replace("\t", "")
+                print(content)
                 clean_content = json.loads(content)
                 _LOGGER.debug("Data Type of Response: =%s", type(clean_content))
                 end_time = time.time()
@@ -295,6 +301,7 @@ class LupusecAPI:
         # example: exec: a=1&z=20&sw=on&pd=
         _LOGGER.debug("{ exec: %s}", execution)        
         params = {"exec": execution}
+        print(params)
 
          # Control Switch
         async with aiohttp.ClientSession(auth=self._auth) as session:
@@ -309,11 +316,10 @@ class LupusecAPI:
             if (token_response != 0):
                 _LOGGER.debug("Token: %s", self._token)
                 headers = {"X-Token": self._token}
+                print(headers)
 
                 # SET_SWITCH
                 _LOGGER.debug("__init__.py.async_set_switch(): REQUEST=%s", CONST.EXECUTE_REQUEST)
-                # Print response list
-                _LOGGER.debug("await asyncio.gather(*tasks)...")
                 set_switch_response = await LupusecAPI._async_api_post(self._ip_address, session, 
                     CONST.EXECUTE_REQUEST, headers, params)
                 _LOGGER.debug("_async_api_post(): done. check response...")
