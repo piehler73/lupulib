@@ -139,7 +139,8 @@ class LupusecAPI:
                 end_time = time.time()
                 _LOGGER.debug(f"Endtime: {end_time}")   
                 _LOGGER.debug(f"Duration: {end_time - start_time} seconds") 
-                _LOGGER.debug("API-Call finished.")              
+                _LOGGER.debug("API-Call finished.")  
+                print(clean_content)            
                 return clean_content
 
         except aiohttp.client_exceptions.ClientConnectorError:
@@ -356,26 +357,25 @@ class LupusecAPI:
                 _LOGGER.debug("__init__.py.async_get_devices(): REQUEST=%s", CONST.DEVICE_LIST_REQUEST)
                 get_switches_response = await LupusecAPI._async_api_call(self._ip_address, session, CONST.DEVICE_LIST_REQUEST)
                 _LOGGER.debug("_async_api_call(): done. check response...")
-                for content in get_switches_response:
-                    # Retreive Device Liste from Response
-                    if CONST.DEVICE_LIST_HEADER in content:
-                        device_content = content[CONST.DEVICE_LIST_HEADER]
-                        print("Number of devices=", len(device_content))    
-                        if (len(device_content) != 0):             
-                            switches = []
-                            for device in device_content:
-                                print("sid: ", device["sid"], ", name: ", device["name"], 
-                                    ", type: ", device["type"], ", status: ", device["status"])
-                                if (type_tag in CONST.TYPES_SWITCH):    
-                                    switches.append(device)
-                                    _LOGGER.debug("device is switch...added.")
-                                else :
-                                    _LOGGER.debug("device is no switch...skipping.")
-                            self._cacheSwitches = switches
-                        else : 
-                            _LOGGER.info("ERROR: get_switches(): no switches found.")
-                    else :
+                # Retreive Device Liste from Response
+                if CONST.DEVICE_LIST_HEADER in get_switches_response:
+                    device_content = get_switches_response[CONST.DEVICE_LIST_HEADER]
+                    print("Number of devices=", len(device_content))    
+                    if (len(device_content) != 0):             
+                        switches = []
+                        for device in device_content:
+                            print("sid: ", device["sid"], ", name: ", device["name"], 
+                                ", type: ", device["type"], ", status: ", device["status"])
+                            if (type_tag in CONST.TYPES_SWITCH):    
+                                switches.append(device)
+                                _LOGGER.debug("device is switch...added.")
+                            else :
+                                _LOGGER.debug("device is no switch...skipping.")
+                        self._cacheSwitches = switches
+                    else : 
                         _LOGGER.info("ERROR: get_switches(): no switches found.")
+                else :
+                    _LOGGER.info("ERROR: get_switches(): no switches found.")
 
         _LOGGER.debug("__init__.py.get_switches() finished.")            
         return self._cacheSwitches
