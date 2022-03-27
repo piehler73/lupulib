@@ -382,10 +382,13 @@ class LupusecAPI:
         if (len(self._cacheSwitches) != 0):
             print("Number of switches=", len(self._cacheSwitches))            
             for switch in self._cacheSwitches:
-                print("sid: ", switch["sid"], ", name: ", switch["name"], 
-                        ", type: ", switch["type"], ", status: ", switch["status"])
+                print("sid: ", switch["sid"], 
+                    ", name: ", switch["name"], 
+                    ", type: ", switch["type"], 
+                    ", area: ", switch["area"],
+                    ", zone: ", switch["zone"],                     
+                    ", status: ", switch["status_ex"])
         return self._cacheSwitches
-
 
     def get_sensors(self):
         _LOGGER.debug("get_sensors() called:")
