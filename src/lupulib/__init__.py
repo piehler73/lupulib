@@ -323,12 +323,20 @@ class LupusecAPI:
                 set_switch_response = await LupusecAPI._async_api_post(self._ip_address, session, 
                     CONST.EXECUTE_REQUEST, headers, params)
                 _LOGGER.debug("_async_api_post(): done. check response...")
-                for content in set_switch_response:
-                    print(content)  
+
+                if (sys.getsizeof(set_switch_response) > 0):
+                    _LOGGER.debug("RESULT_RESPONSE: %s", set_switch_response[CONST.RESPONSE_RESULT]) 
+                    if (token_response[CONST.RESPONSE_RESULT] == 1):
+                        _LOGGER.debug("RESPONSE_MESSAGE: %s", set_switch_response[CONST.RESPONSE_MESSAGE]) 
+                        if (len(set_switch_response[CONST.RESPONSE_MESSAGE]) != 0):
+                            _LOGGER.info("...switch: %s, set to mode: %s", switch, mode)
+                    else :
+                        _LOGGER.info("ERROR: RESULT_RESPONSE: %s", set_switch_response[CONST.RESPONSE_RESULT])
+                        _LOGGER.info("RESPONSE_MESSAGE: %s", set_switch_response[CONST.RESPONSE_MESSAGE])  
             else :    
-                _LOGGER.debug("ERROR: no session Token available.")
+                _LOGGER.info("ERROR: no session Token available.")
             
-        _LOGGER.debug("__init__.py.set_switch_response() finished.")
+        _LOGGER.debug("__init__.py.async_set_switch() finished.")
 
 
     def get_power_switches(self):
