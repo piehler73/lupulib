@@ -390,6 +390,58 @@ class LupusecAPI:
                     ", status: ", switch["status_ex"])
         return self._cacheSwitches
 
+    async def get_binary_sensors(self) -> Dict:
+        """Async method to get BinarySensors."""
+        _LOGGER.debug("__init__.py.get_binary_sensors() called: ")
+        timeNow = time.time()
+        
+        # Get switches from cache or update from Lupusec System
+        # ToDo: update frequency shall not be hard-coded -> transfer to constant
+        if self._cacheBinarySensors is None or timeNow - self._cacheStampP > 2.0:
+            _LOGGER.debug("...BinarySensors need update from Lupusec System.")
+            self._cacheStamp_p = timeNow
+
+            async with aiohttp.ClientSession(auth=self._auth) as session:
+                _LOGGER.debug("auth.encode: %s", self._auth.encode())  
+
+                # Get all devices and filter for switches
+                _LOGGER.debug("__init__.py.async_get_devices(): REQUEST=%s", CONST.DEVICE_LIST_REQUEST)
+                get_bin_sensors_response = await LupusecAPI._async_api_call(self._ip_address, session, CONST.DEVICE_LIST_REQUEST)
+                _LOGGER.debug("_async_api_call(): done. check response...")
+                # Retreive Device Liste from Response
+                if CONST.DEVICE_LIST_HEADER in get_bin_sensors_response:
+                    device_content = get_bin_sensors_response[CONST.DEVICE_LIST_HEADER]
+                    print("Number of devices=", len(device_content))    
+                    if (len(device_content) != 0):             
+                        binary_sensors = []
+                        for device in device_content:
+                            print("sid: ", device["sid"], ", name: ", device["name"], 
+                                ", type: ", device["type"], ", status: ", device["status"])
+                            if (device["type"] in CONST.TYPES_BIN_SENSOR):    
+                                binary_sensors.append(device)
+                                _LOGGER.debug("device is BinarySensor...added.")
+                            else :
+                                _LOGGER.debug("device is no BinarySensor...skipping.")
+                        self._cacheBinarySensors = binary_sensors
+                    else : 
+                        _LOGGER.info("ERROR: get_binary_sensors(): no BinarySensors found.")
+                else :
+                    _LOGGER.info("ERROR: get_binary_sensors(): no BinarySensors found.")
+
+        _LOGGER.debug("__init__.py.get_binary_sensors() finished.") 
+
+        if (len(self._cacheBinarySensors) != 0):
+            print("Number of switches=", len(self._cacheBinarySensors))            
+            for sensor in self._cacheBinarySensors:
+                print("sid: ", sensor["sid"], 
+                    ", name: ", sensor["name"], 
+                    ", type: ", sensor["type"], 
+                    ", area: ", sensor["area"],
+                    ", zone: ", sensor["zone"],                     
+                    ", status: ", sensor["status_ex"])
+        return self._cacheBinarySensors
+
+
     def get_sensors(self):
         _LOGGER.debug("get_sensors() called:")
         stamp_now = time.time()

@@ -126,6 +126,10 @@ def get_arguments():
         help='get all switches',
         required=False, default=False, action="store_true")
 
+    parser.add_argument(
+        '--binsensors',
+        help='get all Binary Sensors',
+        required=False, default=False, action="store_true")
 
     return parser.parse_args()
 
@@ -205,6 +209,11 @@ def call():
             _LOGGER.debug('__main.py__.call().async_get_devices()...')
             asyncio.run(lupusec.get_devices())
             _LOGGER.info('__main.py__.call().async_get_devices()...finished.')
+
+        if args.binsensors:
+            _LOGGER.debug('__main.py__.call().get_binary_sensors()...')
+            asyncio.run(lupusec.get_binary_sensors())
+            _LOGGER.info('__main.py__.call().get_binary_sensors()...finished.')
 
         if args.info:
             _LOGGER.debug('__main.py__.call().async_get_system()...')
